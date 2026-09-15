@@ -1,6 +1,6 @@
-/* ===== Malaysia Trip Service Worker ===== */
-const CACHE = 'malaysia-trip-v2';
-const ASSETS = [
+/* ===== Malaysia Trip Service Worker v3 ===== */
+const CACHE = 'malaysia-trip-v3';
+const APP_SHELL = [
   './',
   './index.html',
   './css/style.css',
@@ -16,9 +16,20 @@ const ASSETS = [
   './icons/favicon.svg'
 ];
 
+const LOCAL_IMAGES = [
+  './img/hero.webp', './img/hotel.webp',
+  './img/d1-1.webp','./img/d1-2.webp','./img/d1-3.webp','./img/d1-4.webp','./img/d1-5.webp',
+  './img/d2-1.webp','./img/d2-2.webp','./img/d2-3.webp','./img/d2-4.webp','./img/d2-5.webp','./img/d2-6.webp','./img/d2-7.webp',
+  './img/d3-1.webp','./img/d3-2.webp','./img/d3-3.webp','./img/d3-4.webp','./img/d3-5.webp','./img/d3-6.webp','./img/d3-7.webp',
+  './img/d4-1.webp','./img/d4-2.webp','./img/d4-3.webp','./img/d4-4.webp','./img/d4-5.webp',
+  './img/d5-1.webp','./img/d5-2.webp','./img/d5-3.webp'
+];
+
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((c) => c.addAll(APP_SHELL.concat(LOCAL_IMAGES)))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -37,24 +48,41 @@ self.addEventListener('fetch', (e) => {
   let url;
   try { url = new URL(req.url); } catch (_) { return; }
 
-  // OpenStreetMap 瓦片：缓存优先，网络回退并写入缓存
-  if (url.hostname.includes('tile.openstreetmap.org')) {
+  // 地图瓦片：Network First（在线优先，失败回退缓存）
+  if (url.hostname.includes('basemaps.cartocdn.com') ||
+      url.hostname.includes('tile.openstreetmap.org') ||
+      url.hostname.includes('arcgisonline.com')) {
     e.respondWith(
-      caches.match(req).then((hit) => {
-        if (hit) return hit;
-        return fetch(req).then((res) => {
-          if (res && res.status === 200) {
-            const clone = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, clone));
-          }
-          return res;
-        });
+      fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, clone));
+        }
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // 第三方 CDN 图片（Wikimedia/Unsplash）：Network First，失败回退本地 placeholder
+  if (url.hostname.includes('upload.wikimedia.org') || url.hostname.includes('images.unsplash.com')) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, clone));
+        }
+        return res;
+      }).catch(() => {
+        // 回退到本地 placeholder（根据文件名推断）
+        const name = url.pathname.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/, '');
+        return caches.match('./img/' + name + '.webp').then((hit) => hit || caches.match('./img/hero.webp'));
       })
     );
     return;
   }
 
-  // 同源资源：缓存优先，网络回退；导航请求离线时回退到 index.html
+  // 同源资源：Cache First，网络回退并更新缓存
   if (url.origin === self.location.origin) {
     e.respondWith(
       caches.match(req).then((hit) => {

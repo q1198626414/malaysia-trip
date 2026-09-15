@@ -1,60 +1,192 @@
-/* ===== Malaysia Trip 交互逻辑（行程由 data.js 渲染） ===== */
+/* ===== Malaysia Trip — 第四+五轮整合：离线 + 折叠 + 简洁/详细 + 新行程 ===== */
 (function () {
   'use strict';
 
   var TAB_KEY = 'mt_tab';
   var CHECKED_KEY = 'mt_checked';
+  var VIEW_KEY = 'mt_view_mode';
+  var COLLAPSE_KEY = 'mt_collapsed';
+  var OFFLINE_KEY = 'mt_offline_ready';
   var NUMS = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
 
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
   function mapsPlace(lat, lng) {
     return 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng;
   }
   function mapsDirTo(lat, lng) {
     return 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
   }
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+
+  /* ---------- 状态 ---------- */
+  var isOffline = !navigator.onLine;
+  var viewMode = localStorage.getItem(VIEW_KEY) || 'simple'; // simple | detail
+  var collapsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '{}'); // {dayId: bool}
+  var checkedSet = {};
+  try { (JSON.parse(localStorage.getItem(CHECKED_KEY)) || []).forEach(function (id) { checkedSet[id] = true; }); } catch (e) {}
+
+  function saveChecked() { try { localStorage.setItem(CHECKED_KEY, JSON.stringify(Object.keys(checkedSet))); } catch (e) {} }
+  function saveView() { try { localStorage.setItem(VIEW_KEY, viewMode); } catch (e) {} }
+  function saveCollapsed() { try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed)); } catch (e) {} }
+
+  /* ---------- 离线状态提示 ---------- */
+  function updateOfflineIndicator() {
+    var el = document.getElementById('offlineIndicator');
+    if (!el) return;
+    if (isOffline) {
+      el.innerHTML = '○ 离线模式';
+      el.className = 'offline-indicator offline-indicator--offline';
+    } else {
+      el.innerHTML = '● 在线';
+      el.className = 'offline-indicator offline-indicator--online';
+    }
+    // 禁用导航按钮
+    document.querySelectorAll('a[href*="google.com/maps"]').forEach(function (a) {
+      if (isOffline) {
+        a.classList.add('btn-disabled');
+        a.setAttribute('title', '联网后可导航');
+      } else {
+        a.classList.remove('btn-disabled');
+        a.removeAttribute('title');
+      }
     });
   }
-  function imgOnError() {
-    return 'onerror="this.style.display=\'none\';this.parentElement.classList.add(\'img-fallback\')"';
+  window.addEventListener('online', function () { isOffline = false; updateOfflineIndicator(); });
+  window.addEventListener('offline', function () { isOffline = true; updateOfflineIndicator(); });
+
+  /* ---------- 渲染住宿 ---------- */
+  function renderStays() {
+    var html = '<div class="stays-section"><h2 class="stays-title">🏨 住宿</h2>';
+    TRIP.stays.forEach(function (s) {
+      var statusBadge = s.status === 'tentative' ? '<span class="stay-status stay-status--tentative">待确认</span>' : '<span class="stay-status stay-status--confirmed">已确认</span>';
+      var candidatesHtml = s.candidates ? '<div class="stay-candidates">候选：' + s.candidates.map(function(c){ return esc(c); }).join(' / ') + '</div>' : '';
+      html +=
+        '<article class="stay-card">' +
+          '<div class="stay-img-wrap"><img src="' + s.image + '" alt="' + esc(s.imageAlt) + '" loading="lazy" data-cdn="' + esc(s.imageCdn) + '" onerror="this.onerror=null;this.src=\'' + s.image + '\'"></div>' +
+          '<div class="stay-body">' +
+            '<div class="stay-head"><h3 class="stay-name">' + esc(s.zhName) + '</h3>' + statusBadge + '</div>' +
+            '<p class="stay-dates">' + s.dates + ' · ' + s.nights + ' 晚</p>' +
+            '<p class="stay-addr">' + esc(s.address) + '</p>' +
+            '<div class="stay-meta"><span>入住 ' + s.checkIn + '</span><span>退房 ' + s.checkOut + '</span></div>' +
+            candidatesHtml +
+            '<div class="stay-btns">' +
+              '<a class="mini-btn" target="_blank" rel="noopener" href="' + s.googleMapsUrl + '">📍 Google Maps</a>' +
+              '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(s.lat, s.lng) + '">🧭 导航</a>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+    });
+    return html + '</div>';
   }
 
-  /* ---------- 渲染酒店卡片 ---------- */
-  function renderHotel() {
-    var h = TRIP.hotel;
+  /* ---------- 渲染地点卡片 ---------- */
+  function renderSpot(day, spot, i, idx) {
+    var next = spot.next || { mode: 'none', text: '' };
+    var hasNext = next.mode && next.mode !== 'none' && i < day.spots.length - 1;
+    var nextHtml = '';
+    if (hasNext) {
+      if (next.mode === 'transit') {
+        nextHtml = '<div class="next-note">🚉 ' + esc(next.text) + '</div>';
+      } else {
+        var b = day.spots[i + 1];
+        nextHtml = '<div class="next-row"><span class="next-text">' + (next.mode === 'grab' ? '🚗 ' : '🚶 ') + esc(next.text) + '</span><a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=' + spot.lat + ',' + spot.lng + '&destination=' + b.lat + ',' + b.lng + (next.mode === 'walk' ? '&travelmode=walking' : '') + '">查看路线</a></div>';
+      }
+    }
+
+    var imgHtml = spot.image
+      ? '<div class="spot-img-wrap"><img src="' + spot.image + '" alt="' + esc(spot.imageAlt || spot.zh) + '" loading="lazy" data-cdn="' + esc(spot.imageCdn) + '" onerror="this.onerror=null;this.src=\'' + spot.image + '\'"></div>'
+      : '';
+
+    // 简洁模式：只显示时间、名称、图片、停留、下一段、导航
+    var simpleHtml =
+      '<div class="spot-simple">' +
+        '<div class="spot-time">' + esc(spot.time || '') + '</div>' +
+        '<div class="spot-title">' + spot.emoji + ' ' + esc(spot.zh) + '</div>' +
+        imgHtml +
+        '<div class="spot-quick-info">' +
+          (spot.duration ? '<span>⏱️ ' + esc(spot.duration) + '</span>' : '') +
+          (hasNext && next.mode === 'grab' ? '<span>🚗 Grab</span>' : '') +
+          (hasNext && next.mode === 'walk' ? '<span>🚶 步行</span>' : '') +
+          (hasNext && next.mode === 'transit' ? '<span>🚉 公共交通</span>' : '') +
+        '</div>' +
+        '<div class="spot-actions">' +
+          '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(spot.lat, spot.lng) + '">🧭 导航</a>' +
+          '<button type="button" class="mini-btn mini-btn--map" data-day="' + day.id + '" data-index="' + i + '">🗺️ 地图</button>' +
+          '<button type="button" class="spot-toggle" data-target="spot-detail-' + day.id + '-' + i + '" aria-expanded="false">详情 ›</button>' +
+        '</div>' +
+      '</div>';
+
+    // 详细模式：展开全部
+    var detailHtml =
+      '<div class="spot-detail" id="spot-detail-' + day.id + '-' + i + '" hidden>' +
+        '<div class="spot-full-info">' +
+          (spot.en ? '<div><b>' + esc(spot.en) + '</b></div>' : '') +
+          '<div>' + esc(spot.note) + '</div>' +
+          (spot.address ? '<div>📍 ' + esc(spot.address) + '</div>' : '') +
+          (spot.openingHours ? '<div>🕐 ' + esc(spot.openingHours) + '</div>' : '') +
+          (spot.ticket ? '<div>🎫 ' + esc(spot.ticket) + '</div>' : '') +
+          (spot.duration ? '<div>⏱️ ' + esc(spot.duration) + '</div>' : '') +
+          (spot.tips && spot.tips.length ? '<div class="spot-tips">💡 ' + spot.tips.map(function(t){ return esc(t); }).join(' · ') + '</div>' : '') +
+          '<div class="spot-detail-btns">' +
+            '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsPlace(spot.lat, spot.lng) + '">📍 地点</a>' +
+            '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(spot.lat, spot.lng) + '">🧭 导航</a>' +
+            '<button type="button" class="mini-btn mini-btn--map" data-day="' + day.id + '" data-index="' + i + '">🗺️ 地图</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
     return (
-      '<article class="hotel-card" id="hotelCard">' +
-        '<div class="hotel-img-wrap">' +
-          '<img src="' + h.image + '" alt="' + esc(h.imageAlt) + '" loading="lazy" ' + imgOnError() + '>' +
-        '</div>' +
-        '<div class="hotel-body">' +
-          '<h2 class="hotel-name">🏨 ' + esc(h.zhName) + '</h2>' +
-          '<p class="hotel-addr">' + esc(h.address) + '</p>' +
-          '<div class="hotel-meta">' +
-            '<span>入住 ' + h.checkIn + '</span><span>退房 ' + h.checkOut + '</span>' +
-            '<span>最近 MRT：' + h.nearestMRT + '</span>' +
-          '</div>' +
-          '<div class="hotel-btns">' +
-            '<a class="mini-btn" target="_blank" rel="noopener" href="' + h.googleMapsUrl + '">📍 Google Maps</a>' +
-            '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(h.lat, h.lng) + '">🧭 导航回酒店</a>' +
-          '</div>' +
-        '</div>' +
-      '</article>'
+      '<li class="todo spot-item" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
+        '<label class="todo-check">' +
+          '<input type="checkbox" data-persist="d' + day.id + '-' + (i + 1) + '">' +
+          '<span class="todo-text">' +
+            '<span class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji +
+            ' <b class="spot-name">' + esc(spot.zh) + '</b></span>' +
+            (viewMode === 'detail' ? '<span class="spot-note">' + esc(spot.note) + '</span>' : '') +
+          '</span>' +
+        '</label>' +
+        (viewMode === 'detail' ? detailHtml.replace('hidden>', '') : simpleHtml + detailHtml) +
+        nextHtml +
+      '</li>'
     );
   }
 
-  /* ---------- 时间分段 ---------- */
-  function timeSegment(timeStr) {
-    if (!timeStr) return '';
-    var h = parseInt(timeStr.match(/(\d+)/)?.[1] || '0', 10);
-    if (h < 12) return 'morning';
-    if (h < 18) return 'afternoon';
-    return 'evening';
-  }
-  function segmentLabel(seg) {
-    return { morning: '🌅 MORNING', afternoon: '☀️ AFTERNOON', evening: '🌙 EVENING' }[seg] || '';
+  /* ---------- 渲染餐厅 ---------- */
+  function renderRestaurants(day) {
+    if (!day.restaurants || !day.restaurants.length) return '';
+    var html = '<article class="event-card restaurant-card"><h3 class="event-title">🍽️ 当日餐食</h3><div class="restaurant-list">';
+    day.restaurants.forEach(function (r, ri) {
+      var mealEmoji = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍧' }[r.meal] || '🍽️';
+      var tagsHtml = r.tags ? r.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') : '';
+      var simpleR =
+        '<div class="restaurant-simple">' +
+          '<div class="restaurant-head"><span class="restaurant-meal">' + mealEmoji + ' ' + esc(r.meal) + '</span><span class="restaurant-time">' + esc(r.time) + '</span></div>' +
+          '<div class="restaurant-name">' + esc(r.zhName) + '</div>' +
+          '<div class="restaurant-meta">' + esc(r.cuisine) + ' · ' + esc(r.pricePerPerson) + '</div>' +
+          '<div class="restaurant-dishes">推荐：' + r.recommendedDishes.slice(0, 2).map(function(d){ return esc(d); }).join(' · ') + '</div>' +
+          '<div class="restaurant-btns">' +
+            '<a class="mini-btn" target="_blank" rel="noopener" href="' + r.googleMapsUrl + '">🧭 导航</a>' +
+            '<button type="button" class="spot-toggle" data-target="restaurant-detail-' + day.id + '-' + ri + '" aria-expanded="false">详情 ›</button>' +
+          '</div>' +
+        '</div>';
+      var detailR =
+        '<div class="restaurant-detail" id="restaurant-detail-' + day.id + '-' + ri + '" hidden>' +
+          '<div class="restaurant-full">' +
+            '<div>' + esc(r.name) + '</div>' +
+            '<div>🕐 ' + esc(r.openingHours) + '</div>' +
+            '<div>📍 ' + esc(r.distanceFromPrev) + '</div>' +
+            '<div>推荐：' + r.recommendedDishes.map(function(d){ return esc(d); }).join(' · ') + '</div>' +
+            '<div class="restaurant-tags">' + tagsHtml + '</div>' +
+            (r.backup ? '<div class="restaurant-backup">备用：' + esc(r.backup.zhName || r.backup.name) + ' — ' + esc(r.backup.note) + '</div>' : '') +
+            '<div class="restaurant-btns"><a class="mini-btn" target="_blank" rel="noopener" href="' + r.googleMapsUrl + '">📍 Google Maps</a></div>' +
+          '</div>' +
+        '</div>';
+      html += '<div class="restaurant-item">' + simpleR + detailR + '</div>';
+    });
+    return html + '</div></article>';
   }
 
   /* ---------- 渲染每天 ---------- */
@@ -71,107 +203,33 @@
         '<div class="transport-note">' + esc(t.note) + '</div>' +
       '</article>';
 
-    // 当天摘要
     var s = day.summary;
     var summaryHtml =
       '<div class="day-summary">' +
         '<span>📍 ' + s.spots + ' 个地点</span><span>🚶 ' + s.walks + '</span>' +
         '<span>🚗 ' + s.grabs + ' 次 Grab</span><span>💰 ' + s.budget + '</span>' +
+        (s.endTime ? '<span>🌙 ' + s.endTime + '</span>' : '') +
       '</div>';
 
-    // 时间分段渲染
+    // 时间分段
     var listHtml = '';
     var lastSeg = '';
     day.spots.forEach(function (spot, i) {
-      var seg = timeSegment(spot.time || (day.restaurants.find(function (r) { return r.meal === 'breakfast'; })?.time));
-      // 简化：用 spot 在列表中的位置推断时间段（前2=早上，中间=下午，后2=晚上）
-      if (i <= 1) seg = 'morning'; else if (i >= day.spots.length - 2) seg = 'evening'; else seg = 'afternoon';
+      var seg = 'morning';
+      if (i >= day.spots.length - 2) seg = 'evening';
+      else if (i > 1) seg = 'afternoon';
       if (seg !== lastSeg) {
-        listHtml += '<li class="time-seg">' + segmentLabel(seg) + '</li>';
+        listHtml += '<li class="time-seg">' + { morning: '🌅 MORNING', afternoon: '☀️ AFTERNOON', evening: '🌙 EVENING' }[seg] + '</li>';
         lastSeg = seg;
       }
-
-      var next = spot.next || { mode: 'none', text: '' };
-      var hasNext = next.mode && next.mode !== 'none' && i < day.spots.length - 1;
-      var nextHtml = '';
-      if (hasNext) {
-        if (next.mode === 'transit') {
-          nextHtml = '<div class="next-note">🚉 ' + esc(next.text) + '</div>';
-        } else {
-          var b = day.spots[i + 1];
-          nextHtml = '<div class="next-row"><span class="next-text">' + (next.mode === 'grab' ? '🚗 建议 Grab · ' : '🚶 ') + esc(next.text) + '</span><a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=' + spot.lat + ',' + spot.lng + '&destination=' + b.lat + ',' + b.lng + (next.mode === 'walk' ? '&travelmode=walking' : '') + '">查看路线</a></div>';
-        }
-      }
-
-      // 图片
-      var imgHtml = spot.image
-        ? '<div class="spot-img-wrap"><img src="' + spot.image + '" alt="' + esc(spot.imageAlt || spot.zh) + '" loading="lazy" ' + imgOnError() + '></div>'
-        : '';
-
-      // 详情展开区
-      var detailsHtml = '';
-      if (spot.duration || spot.openingHours || spot.ticket || (spot.tips && spot.tips.length)) {
-        detailsHtml = '<div class="spot-details">' +
-          (spot.duration ? '<div>⏱️ 预计停留：' + esc(spot.duration) + '</div>' : '') +
-          (spot.openingHours ? '<div>🕐 营业时间：' + esc(spot.openingHours) + '</div>' : '') +
-          (spot.ticket ? '<div>🎫 门票：' + esc(spot.ticket) + '</div>' : '') +
-          (spot.address ? '<div>📍 地址：' + esc(spot.address) + '</div>' : '') +
-          (spot.tips && spot.tips.length ? '<div class="spot-tips">💡 ' + spot.tips.map(function(tip){ return esc(tip); }).join(' · ') + '</div>' : '') +
-        '</div>';
-      }
-
-      listHtml +=
-        '<li class="todo spot-item" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
-          '<label class="todo-check">' +
-            '<input type="checkbox" data-persist="d' + day.id + '-' + (i + 1) + '">' +
-            '<span class="todo-text">' +
-              imgHtml +
-              '<span class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji +
-              ' <b class="spot-name">' + esc(spot.zh) + '</b>' + (spot.en ? ' · ' + esc(spot.en) : '') + '</span>' +
-              '<span class="spot-note">' + esc(spot.note) + '</span>' +
-              '<span class="spot-btns">' +
-                '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + spot.lat + ',' + spot.lng + '">📍 地点</a>' +
-                '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + spot.lat + ',' + spot.lng + '">🧭 导航</a>' +
-                '<button type="button" class="mini-btn mini-btn--map" data-day="' + day.id + '" data-index="' + i + '">🗺️ 地图</button>' +
-              '</span>' +
-            '</span>' +
-          '</label>' +
-          detailsHtml +
-          nextHtml +
-        '</li>';
+      listHtml += renderSpot(day, spot, i, idx);
     });
 
-    // 餐厅卡片
-    var restaurantHtml = '';
-    if (day.restaurants && day.restaurants.length) {
-      restaurantHtml = '<article class="event-card restaurant-card"><h3 class="event-title">🍽️ 当日餐食</h3><div class="restaurant-list">';
-      day.restaurants.forEach(function (r) {
-        var mealEmoji = { breakfast: '🌅', lunch: '☀️', dinner: '🌙' }[r.meal] || '🍽️';
-        var tagsHtml = r.tags ? r.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') : '';
-        restaurantHtml +=
-          '<div class="restaurant-item">' +
-            '<div class="restaurant-head">' +
-              '<span class="restaurant-meal">' + mealEmoji + ' ' + esc(r.meal) + '</span>' +
-              '<span class="restaurant-time">' + esc(r.time) + '</span>' +
-            '</div>' +
-            '<div class="restaurant-name">' + esc(r.zhName) + '</div>' +
-            '<div class="restaurant-en">' + esc(r.name) + '</div>' +
-            '<div class="restaurant-meta">' + esc(r.cuisine) + ' · ' + esc(r.pricePerPerson) + ' · ' + esc(r.openingHours) + '</div>' +
-            '<div class="restaurant-dishes">推荐：' + r.recommendedDishes.map(function(d){ return esc(d); }).join(' · ') + '</div>' +
-            '<div class="restaurant-distance">📍 ' + esc(r.distanceFromPrev) + '</div>' +
-            '<div class="restaurant-tags">' + tagsHtml + '</div>' +
-            '<div class="restaurant-btns">' +
-              '<a class="mini-btn" target="_blank" rel="noopener" href="' + r.googleMapsUrl + '">📍 Google Maps</a>' +
-              (r.backup ? '<span class="restaurant-backup">备用：' + esc(r.backup.zhName || r.backup.name) + ' — ' + esc(r.backup.note) + '</span>' : '') +
-            '</div>' +
-          '</div>';
-      });
-      restaurantHtml += '</div></article>';
-    }
-
-    // 当天多地点路线按钮
     var waypoints = day.spots.map(function (s) { return s.lat + ',' + s.lng; }).join('/');
     var dayRouteBtn = '<a class="mini-btn day-route-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日完整路线</a>';
+
+    var isCollapsed = collapsed['day-' + day.id] || false;
+    var collapseIcon = isCollapsed ? '▸' : '▾';
 
     return (
       '<section class="day-section" id="d' + day.id + '">' +
@@ -182,21 +240,38 @@
             '<span class="day-title">｜' + esc(day.title) + '</span>' +
             '<span class="day-progress" id="progress-d' + day.id + '"></span>' +
           '</div>' +
+          '<button class="day-collapse-btn" data-day="' + day.id + '" aria-expanded="' + !isCollapsed + '">' + collapseIcon + '</button>' +
         '</div>' +
         '<p class="day-theme">' + esc(day.theme) +
           '<button class="reset-day-btn" data-day="' + day.id + '" type="button">重置当天进度</button></p>' +
         summaryHtml +
-        transportHtml +
-        dayRouteBtn +
-        '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +
-        restaurantHtml +
+        '<div class="day-content" id="day-content-' + day.id + '"' + (isCollapsed ? ' hidden' : '') + '>' +
+          transportHtml + dayRouteBtn +
+          '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +
+          renderRestaurants(day) +
+        '</div>' +
       '</section>'
     );
   }
 
-  // 渲染全部
+  /* ---------- 渲染顶部控制区 ---------- */
+  function renderControls() {
+    var offlineReady = localStorage.getItem(OFFLINE_KEY);
+    var offlineText = offlineReady ? '✓ 离线行程已就绪' : '↓ 下载离线行程';
+    var offlineClass = offlineReady ? 'offline-ready' : '';
+    return (
+      '<div class="top-controls">' +
+        '<div class="offline-indicator" id="offlineIndicator">● 在线</div>' +
+        '<button class="view-toggle" id="viewToggle">' + (viewMode === 'simple' ? '简洁' : '详细') + '</button>' +
+        '<button class="offline-btn ' + offlineClass + '" id="offlineBtn">' + offlineText + '</button>' +
+        '<button class="share-btn" id="shareBtn">分享</button>' +
+      '</div>'
+    );
+  }
+
+  /* ---------- 渲染页面 ---------- */
   var itineraryContainer = document.getElementById('tabContentItinerary');
-  itineraryContainer.innerHTML = renderHotel() + TRIP.days.map(renderDay).join('');
+  itineraryContainer.innerHTML = renderControls() + renderStays() + TRIP.days.map(renderDay).join('');
 
   /* ---------- 标签切换 ---------- */
   var tabItineraryBtn = document.getElementById('tabItinerary');
@@ -220,14 +295,7 @@
   tabItineraryBtn.addEventListener('click', function () { setActiveTab('itinerary'); });
   tabMapBtn.addEventListener('click', function () { setActiveTab('map'); });
 
-  /* ---------- Checkbox 持久化 + 进度 ---------- */
-  function loadChecked() {
-    try { var raw = localStorage.getItem(CHECKED_KEY); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
-  }
-  function saveChecked(list) { try { localStorage.setItem(CHECKED_KEY, JSON.stringify(list)); } catch (e) {} }
-  var checkedSet = {};
-  loadChecked().forEach(function (id) { checkedSet[id] = true; });
-
+  /* ---------- Checkbox 持久化 ---------- */
   function updateProgress(dayId) {
     var total = document.querySelectorAll('input[data-persist^="d' + dayId + '-"]').length;
     var done = document.querySelectorAll('li.done[data-spot^="' + (dayId - 1) + '-"]').length;
@@ -242,7 +310,7 @@
     input.addEventListener('change', function () {
       if (input.checked) { checkedSet[id] = true; li.classList.add('done'); }
       else { delete checkedSet[id]; li.classList.remove('done'); }
-      saveChecked(Object.keys(checkedSet));
+      saveChecked();
       var dayNum = id.slice(1, id.indexOf('-', 1));
       updateProgress(dayNum);
     });
@@ -256,11 +324,91 @@
         input.checked = false; delete checkedSet[input.getAttribute('data-persist')];
         input.closest('li').classList.remove('done');
       });
-      saveChecked(Object.keys(checkedSet)); updateProgress(dayId);
+      saveChecked(); updateProgress(dayId);
     });
   });
 
   TRIP.days.forEach(function (d) { updateProgress(d.id); });
+
+  /* ---------- 简洁/详细模式切换 ---------- */
+  document.getElementById('viewToggle').addEventListener('click', function () {
+    viewMode = viewMode === 'simple' ? 'detail' : 'simple';
+    saveView();
+    location.reload();
+  });
+
+  /* ---------- 折叠系统 ---------- */
+  document.querySelectorAll('.day-collapse-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var dayId = btn.getAttribute('data-day');
+      var content = document.getElementById('day-content-' + dayId);
+      var isHidden = content.hidden;
+      content.hidden = !isHidden;
+      btn.textContent = isHidden ? '▾' : '▸';
+      btn.setAttribute('aria-expanded', String(isHidden));
+      collapsed['day-' + dayId] = !isHidden;
+      saveCollapsed();
+    });
+  });
+
+  document.querySelectorAll('.spot-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-target');
+      var target = document.getElementById(targetId);
+      if (!target) return;
+      var isHidden = target.hidden;
+      target.hidden = !isHidden;
+      btn.textContent = isHidden ? '收起 ›' : '详情 ›';
+      btn.setAttribute('aria-expanded', String(isHidden));
+    });
+  });
+
+  /* ---------- 分享 ---------- */
+  document.getElementById('shareBtn').addEventListener('click', function () {
+    var shareData = {
+      title: 'Malaysia Trip · 马来西亚五天四夜',
+      text: '2026.10.02 – 2026.10.06 吉隆坡 × 马六甲 × 波德申',
+      url: window.location.href
+    };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function () {});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function () {
+        var btn = document.getElementById('shareBtn');
+        btn.textContent = '链接已复制';
+        setTimeout(function () { btn.textContent = '分享'; }, 2000);
+      });
+    }
+  });
+
+  /* ---------- 离线下载 ---------- */
+  document.getElementById('offlineBtn').addEventListener('click', async function () {
+    var btn = this;
+    btn.textContent = '下载中...';
+    btn.disabled = true;
+    try {
+      var cache = await caches.open('malaysia-trip-v3');
+      var assets = [
+        './', './index.html', './css/style.css', './js/app.js', './js/data.js', './js/map.js',
+        './vendor/leaflet/leaflet.js', './vendor/leaflet/leaflet.css',
+        './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/favicon.svg'
+      ];
+      // 添加所有本地图片
+      for (var i = 0; i < 29; i++) {
+        var day = Math.floor(i / 7) + 1;
+        var idx = (i % 7) + 1;
+        assets.push('./img/d' + day + '-' + idx + '.webp');
+      }
+      assets.push('./img/hotel.webp', './img/hero.webp');
+      await cache.addAll(assets);
+      localStorage.setItem(OFFLINE_KEY, new Date().toISOString());
+      btn.textContent = '✓ 离线行程已就绪';
+      btn.classList.add('offline-ready');
+    } catch (err) {
+      btn.textContent = '下载失败，请重试';
+      btn.disabled = false;
+    }
+  });
 
   /* ---------- Timeline → 地图联动 ---------- */
   document.querySelectorAll('.mini-btn--map').forEach(function (btn) {
@@ -274,7 +422,6 @@
     });
   });
 
-  // 点击 Timeline 整行也触发地图联动（可选）
   document.querySelectorAll('.spot-item').forEach(function (item) {
     item.addEventListener('click', function (e) {
       if (e.target.closest('a') || e.target.closest('button') || e.target.closest('label') || e.target.closest('input')) return;
@@ -328,6 +475,19 @@
     if (day && savedTab !== 'map') {
       var target = document.getElementById('d' + day);
       if (target) setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
+    }
+    updateOfflineIndicator();
+    // 尝试用 CDN 图片替换本地 placeholder（在线时）
+    if (!isOffline) {
+      document.querySelectorAll('img[data-cdn]').forEach(function (img) {
+        var cdn = img.getAttribute('data-cdn');
+        if (cdn && cdn !== img.src) {
+          var test = new Image();
+          test.onload = function () { img.src = cdn; };
+          test.onerror = function () { /* keep placeholder */ };
+          test.src = cdn;
+        }
+      });
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

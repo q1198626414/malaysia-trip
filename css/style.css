@@ -586,3 +586,88 @@ a { color: inherit; }
   position: absolute; inset: 0;
   background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.62));
 }
+
+/* ===== 顶部控制区 ===== */
+.top-controls {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 16px; padding: 10px 0;
+}
+.offline-indicator {
+  font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+}
+.offline-indicator--online { background: #e8f5e9; color: #2e7d32; }
+.offline-indicator--offline { background: #ffebee; color: #c62828; }
+.view-toggle, .offline-btn, .share-btn {
+  font-size: 0.75rem; font-weight: 800; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid rgba(44,62,80,0.18); background: #fff; color: var(--primary);
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.view-toggle { background: var(--primary); color: #fff; }
+.offline-btn { background: #f4f6f8; }
+.offline-btn.offline-ready { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+.share-btn { background: var(--accent); color: #1a1a1a; border-color: rgba(0,0,0,0.12); }
+
+/* ===== 住宿卡片 ===== */
+.stays-section { margin-bottom: 20px; }
+.stays-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0 0 12px; }
+.stay-card {
+  background: var(--card); border-radius: var(--radius); overflow: hidden;
+  margin-bottom: 14px; border: 1px solid var(--card-border);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+.stay-img-wrap { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: linear-gradient(150deg,#2c3e50,#34495e); }
+.stay-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.stay-body { padding: 14px 16px; }
+.stay-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.stay-name { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin: 0; }
+.stay-status { font-size: 0.68rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; }
+.stay-status--confirmed { background: #e8f5e9; color: #2e7d32; }
+.stay-status--tentative { background: #fff3e0; color: #e65100; }
+.stay-dates { font-size: 0.82rem; font-weight: 700; color: var(--accent); margin: 0 0 6px; }
+.stay-addr { font-size: 0.8rem; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.4; }
+.stay-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 10px; }
+.stay-meta span { background: #f4f6f8; padding: 3px 10px; border-radius: 999px; }
+.stay-candidates { font-size: 0.76rem; color: #888; margin-bottom: 10px; padding: 6px 10px; background: #f7f8fa; border-radius: 8px; }
+.stay-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== 地点简洁模式 ===== */
+.spot-simple { margin-top: 6px; }
+.spot-time { font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+.spot-title { font-size: 1rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.spot-quick-info { display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 8px; }
+.spot-quick-info span { background: #f4f6f8; padding: 2px 8px; border-radius: 999px; }
+.spot-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+.spot-toggle {
+  font-size: 0.76rem; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid rgba(44,62,80,0.14); background: transparent; color: var(--primary);
+  cursor: pointer; font-family: inherit;
+}
+.spot-toggle[aria-expanded="true"] { background: var(--primary); color: #fff; }
+
+/* ===== 地点详情模式 ===== */
+.spot-detail { margin-top: 8px; padding: 12px; border-radius: 10px; background: #f0f2f5; font-size: 0.82rem; color: #555; line-height: 1.6; }
+.spot-detail div { margin-bottom: 4px; }
+.spot-tips { color: #7a6a4a; margin-top: 6px; }
+.spot-detail-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+/* ===== 餐厅简洁/详情 ===== */
+.restaurant-simple { margin-bottom: 4px; }
+.restaurant-detail { margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: #f0f2f5; font-size: 0.8rem; color: #555; line-height: 1.55; }
+.restaurant-full div { margin-bottom: 4px; }
+
+/* ===== 每天折叠 ===== */
+.day-collapse-btn {
+  margin-left: auto; font-size: 1.2rem; font-weight: 800;
+  background: none; border: none; color: var(--accent); cursor: pointer;
+  padding: 4px 10px; border-radius: 8px;
+}
+.day-collapse-btn:hover { background: rgba(212,163,115,0.12); }
+.day-content[hidden] { display: none; }
+
+/* ===== 离线禁用按钮 ===== */
+.btn-disabled { opacity: 0.45; pointer-events: none; }
+
+/* ===== 隐藏元素 ===== */
+[hidden] { display: none !important; }

@@ -130,7 +130,7 @@
             (next.mode === 'grab' ? '🚗 ' : next.mode === 'walk' ? '🚶 ' : '🚉 ') + next.text + '</div>'
           : '';
         var imgThumb = s.image
-          ? '<img src="' + s.image.replace(/w=800/, 'w=200') + '" alt="' + (s.imageAlt || s.zh) + '" class="map-popup-img" loading="lazy" onerror="this.style.display=\'none\'">'
+          ? '<img src="' + s.image + '" alt="' + (s.imageAlt || s.zh) + '" class="map-popup-img" loading="lazy" onerror="this.style.display=\'none\'">'
           : '';
         var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, i + 1, s.type) })
           .addTo(group)
