@@ -499,6 +499,10 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function () {});
+      // 新 SW 激活后自动刷新页面，确保用户看到最新版本
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        window.location.reload();
+      });
     });
   }
 })();

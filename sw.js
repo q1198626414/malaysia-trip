@@ -1,5 +1,5 @@
 /* ===== Malaysia Trip Service Worker v3 ===== */
-const CACHE = 'malaysia-trip-v3';
+const CACHE = 'malaysia-trip-v4';
 const APP_SHELL = [
   './',
   './index.html',
