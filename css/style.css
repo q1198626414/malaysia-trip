@@ -455,3 +455,134 @@ a { color: inherit; }
   .photo-carousel { margin-left: 0; margin-right: 0; }
   .main-content { padding-left: 24px; padding-right: 24px; }
 }
+
+/* ===== 酒店卡片 ===== */
+.hotel-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+.hotel-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(150deg, #2c3e50, #34495e);
+}
+.hotel-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.hotel-body { padding: 14px 16px; }
+.hotel-name { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+.hotel-addr { font-size: 0.8rem; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.4; }
+.hotel-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 14px;
+  font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 10px;
+}
+.hotel-meta span {
+  background: #f4f6f8; padding: 3px 10px; border-radius: 999px;
+}
+.hotel-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== 当天摘要 ===== */
+.day-summary {
+  display: flex; flex-wrap: wrap; gap: 8px 12px;
+  margin-bottom: 14px; font-size: 0.78rem;
+}
+.day-summary span {
+  background: rgba(212,163,115,0.12); color: #7a5c3a;
+  padding: 5px 12px; border-radius: 999px;
+  font-weight: 700; letter-spacing: 0.3px;
+}
+
+/* ===== 时间分段 ===== */
+.time-seg {
+  list-style: none; padding: 10px 0 4px; margin: 0;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
+  color: var(--accent); opacity: 0.7;
+  border-bottom: 1px dashed rgba(212,163,115,0.25);
+  margin-bottom: 6px;
+}
+
+/* ===== 地点图片 ===== */
+.spot-img-wrap {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
+  margin-bottom: 10px; background: linear-gradient(150deg, #2c3e50, #34495e);
+}
+.spot-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.spot-img-wrap.img-fallback { background: linear-gradient(150deg, #3a4a5c, #2c3e50); }
+
+.spot-note { display: block; font-size: 0.84rem; color: var(--ink-soft); margin-top: 2px; }
+.spot-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.spot-details {
+  margin: 8px 0 4px; padding: 10px 12px; border-radius: 10px;
+  background: #f0f2f5; font-size: 0.8rem; color: #555; line-height: 1.55;
+}
+.spot-details div { margin-bottom: 3px; }
+.spot-tips { color: #7a6a4a; margin-top: 4px; }
+
+/* ===== 餐厅卡片 ===== */
+.restaurant-card { margin-top: 14px; }
+.restaurant-list { display: flex; flex-direction: column; gap: 14px; }
+.restaurant-item {
+  border-left: 3px solid var(--accent); padding-left: 12px;
+}
+.restaurant-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+}
+.restaurant-meal { font-size: 0.75rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+.restaurant-time { font-size: 0.75rem; color: var(--ink-soft); }
+.restaurant-name { font-size: 1rem; font-weight: 800; color: var(--primary); }
+.restaurant-en { font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 4px; }
+.restaurant-meta { font-size: 0.78rem; color: #666; margin-bottom: 4px; }
+.restaurant-dishes { font-size: 0.8rem; color: #555; margin-bottom: 4px; }
+.restaurant-distance { font-size: 0.76rem; color: var(--ink-soft); margin-bottom: 6px; }
+.restaurant-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.tag {
+  font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+  background: #eef2f7; color: #4a5568; border: 1px solid #dde3ea;
+}
+.restaurant-backup {
+  display: block; font-size: 0.75rem; color: #777; margin-top: 6px;
+  padding: 6px 10px; background: #f7f8fa; border-radius: 8px;
+}
+.restaurant-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+
+/* ===== 当天路线按钮 ===== */
+.day-route-btn { display: block; width: 100%; text-align: center; margin-bottom: 14px; }
+
+/* ===== 地图降级 ===== */
+#mapFallback { padding: 16px; }
+.map-fallback-head { margin-bottom: 16px; }
+.map-fallback-head h3 { font-size: 1.1rem; color: var(--primary); margin: 0 0 6px; }
+.map-fallback-head p { font-size: 0.82rem; color: var(--ink-soft); margin: 0; }
+.fallback-day { margin-bottom: 18px; padding: 14px; background: #f7f8fa; border-radius: 12px; }
+.fallback-day h4 { font-size: 0.95rem; color: var(--primary); margin: 0 0 10px; }
+.fallback-day ol { padding-left: 20px; margin: 0 0 10px; font-size: 0.85rem; line-height: 1.7; }
+.fallback-day ol li { margin-bottom: 2px; }
+.fallback-arrow { list-style: none; color: var(--accent); font-weight: 700; padding-left: 20px; margin: 2px 0; }
+
+/* ===== 地图 Popup 升级 ===== */
+.map-popup-img {
+  width: 100%; height: 120px; object-fit: cover; border-radius: 10px;
+  margin-bottom: 8px; display: block;
+}
+.map-popup-btns { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+/* ===== 地图 Marker 类型 ===== */
+.map-marker--food { font-size: 0.68rem; }
+.map-marker--hotel { font-size: 0.68rem; }
+.map-marker--transit { font-size: 0.68rem; background: #5c636a; }
+
+/* ===== Hero 真实图片支持 ===== */
+.hero-bg-img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+}
+.hero-bg-img::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.62));
+}

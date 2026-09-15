@@ -1,4 +1,4 @@
-/* ===== 地图（Leaflet）：数据来自 data.js；只画步行 / Grab 路段 ===== */
+/* ===== 地图（Leaflet）：多瓦片源自动降级 + Timeline 双向联动 ===== */
 (function () {
   'use strict';
 
@@ -6,33 +6,119 @@
   var WALK = '#3f9e6b';
   var GRAB = '#e0a13c';
 
+  // 瓦片源配置（按优先级）
+  var TILE_SOURCES = [
+    {
+      name: 'CartoDB Voyager',
+      url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    },
+    {
+      name: 'OpenStreetMap',
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: 'abc',
+      maxZoom: 19
+    },
+    {
+      name: 'Esri World Street',
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ',
+      subdomains: '',
+      maxZoom: 18
+    }
+  ];
+
   var map = null;
   var mapReady = false;
-  var dayLayers = {};   // dayId -> L.layerGroup (markers + routes)
-  var nodeLayers = {};  // 交通节点
+  var dayLayers = {};
+  var nodeLayers = {};
   var currentFilter = 'all';
+  var markersBySpot = {}; // "dayId-index" -> L.marker
+  var currentTileLayer = null;
+  var tileFailCount = 0;
 
-  function markerIcon(day, n, dim) {
+  function markerIcon(day, n, type) {
+    var bg = DAY_COLORS[day] || '#888';
+    var content = type === 'food' ? '🍜' : type === 'hotel' ? '🏨' : type === 'transit' ? '🚉' : String(n);
+    var size = type === 'food' || type === 'hotel' || type === 'transit' ? 22 : 26;
     return L.divIcon({
       className: '',
-      html: '<div class="map-marker" style="background:' + DAY_COLORS[day] + (dim ? ';opacity:.55' : '') + '">' + n + '</div>',
-      iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -14]
+      html: '<div class="map-marker' + (type === 'food' ? ' map-marker--food' : type === 'hotel' ? ' map-marker--hotel' : type === 'transit' ? ' map-marker--transit' : '') + '" style="background:' + bg + '">' + content + '</div>',
+      iconSize: [size, size], iconAnchor: [size/2, size/2], popupAnchor: [0, -size/2]
     });
+  }
+
+  function addTileLayer(srcIndex) {
+    if (currentTileLayer) {
+      map.removeLayer(currentTileLayer);
+      currentTileLayer = null;
+    }
+    var src = TILE_SOURCES[srcIndex];
+    if (!src) return false;
+    currentTileLayer = L.tileLayer(src.url, {
+      attribution: src.attribution,
+      subdomains: src.subdomains,
+      maxZoom: src.maxZoom,
+      crossOrigin: true
+    });
+    currentTileLayer.on('tileerror', function () {
+      tileFailCount++;
+      if (tileFailCount > 6) {
+        // 尝试下一个瓦片源
+        var nextIndex = srcIndex + 1;
+        if (nextIndex < TILE_SOURCES.length) {
+          tileFailCount = 0;
+          addTileLayer(nextIndex);
+        } else {
+          showMapFallback();
+        }
+      }
+    });
+    currentTileLayer.addTo(map);
+    return true;
+  }
+
+  function showMapFallback() {
+    var mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    // 隐藏地图，显示降级 UI
+    mapEl.style.display = 'none';
+    var fallback = document.getElementById('mapFallback');
+    if (fallback) fallback.hidden = false;
+    renderFallbackRoutes();
+  }
+
+  function renderFallbackRoutes() {
+    var container = document.getElementById('mapFallbackRoutes');
+    if (!container) return;
+    var filter = currentFilter === 'all' ? null : parseInt(currentFilter, 10);
+    var html = '';
+    TRIP.days.forEach(function (day) {
+      if (filter && day.id !== filter) return;
+      html += '<div class="fallback-day"><h4>Day ' + day.id + '｜' + day.title + '</h4><ol>';
+      day.spots.forEach(function (s, i) {
+        var num = i + 1;
+        html += '<li><b>' + num + '.</b> ' + s.zh + ' ' + s.en + '</li>';
+        if (s.next && s.next.mode !== 'none' && i < day.spots.length - 1) {
+          html += '<li class="fallback-arrow">↓ ' + s.next.text + '</li>';
+        }
+      });
+      html += '</ol>';
+      // 当天 Google Maps 多地点路线
+      var waypoints = day.spots.map(function (s) { return s.lat + ',' + s.lng; }).join('/');
+      html += '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日路线</a></div>';
+    });
+    container.innerHTML = html;
   }
 
   function buildMap() {
     map = L.map('map', { scrollWheelZoom: false });
+    addTileLayer(0);
 
-    var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 18
-    });
-    tiles.on('tileerror', function () {
-      var hint = document.getElementById('mapOfflineHint');
-      if (hint) hint.hidden = false;
-    });
-    tiles.addTo(map);
-
+    // 构建 day layers
     TRIP.days.forEach(function (day) {
       var group = L.layerGroup();
       var spots = day.spots;
@@ -43,19 +129,34 @@
           ? '<div class="map-popup-next">' +
             (next.mode === 'grab' ? '🚗 ' : next.mode === 'walk' ? '🚶 ' : '🚉 ') + next.text + '</div>'
           : '';
-        L.marker([s.lat, s.lng], { icon: markerIcon(day.id, i + 1) })
+        var imgThumb = s.image
+          ? '<img src="' + s.image.replace(/w=800/, 'w=200') + '" alt="' + (s.imageAlt || s.zh) + '" class="map-popup-img" loading="lazy" onerror="this.style.display=\'none\'">'
+          : '';
+        var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, i + 1, s.type) })
           .addTo(group)
           .bindPopup(
-            '<div class="map-popup">' +
+            '<div class="map-popup">' + imgThumb +
               '<b>' + s.zh + '</b><br>' + s.en +
-              '<div class="map-popup-meta">D' + day.id + ' · 第 ' + (i + 1) + ' 站</div>' +
+              '<div class="map-popup-meta">D' + day.id + ' · 第 ' + (i + 1) + ' 站 · ' + (s.duration || '') + '</div>' +
               nextLine +
-              '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng + '">📍 Google Maps</a>' +
+              '<div class="map-popup-btns">' +
+                '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng + '">📍 地点</a>' +
+                '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lng + '">🧭 导航</a>' +
+              '</div>' +
             '</div>'
           );
+        m.on('click', function () {
+          // Timeline 联动：滚动到对应行程卡片
+          var el = document.getElementById('d' + day.id + '-spot-' + i);
+          if (el) {
+            setActiveTab('itinerary');
+            setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+          }
+        });
+        markersBySpot[day.id + '-' + i] = m;
       });
 
-      // 只画步行 / Grab 路段；transit 段不画线
+      // 只画步行 / Grab 路段
       spots.forEach(function (s, i) {
         var next = s.next || {};
         if (!next.mode || next.mode === 'none' || next.mode === 'transit' || i >= spots.length - 1) return;
@@ -74,11 +175,7 @@
     (TRIP.transitNodes || []).forEach(function (n) {
       nodeLayers[n.day] = nodeLayers[n.day] || L.layerGroup();
       L.marker([n.lat, n.lng], {
-        icon: L.divIcon({
-          className: '',
-          html: '<div class="map-marker map-marker--node">🚌</div>',
-          iconSize: [24, 24], iconAnchor: [12, 12]
-        })
+        icon: L.divIcon({ className: '', html: '<div class="map-marker map-marker--node">🚌</div>', iconSize: [22, 22], iconAnchor: [11, 11] })
       }).addTo(nodeLayers[n.day]).bindPopup('<div class="map-popup"><b>' + n.name + '</b><div class="map-popup-meta">交通节点 · 长途巴士</div></div>');
     });
 
@@ -98,19 +195,25 @@
       else if (map.hasLayer(nodeLayers[id])) map.removeLayer(nodeLayers[id]);
     });
 
-    // 自动缩放
     var pts = [];
     TRIP.days.forEach(function (day) {
       if (f !== 'all' && String(day.id) !== String(f)) return;
       day.spots.forEach(function (s) { pts.push([s.lat, s.lng]); });
     });
     if (f !== 'all' && nodeLayers[f]) {
-      nodeLayers[f].eachLayer(function (l) {
-        var ll = l.getLatLng(); pts.push([ll.lat, ll.lng]);
-      });
+      nodeLayers[f].eachLayer(function (l) { var ll = l.getLatLng(); pts.push([ll.lat, ll.lng]); });
     }
     if (pts.length === 1) map.setView(pts[0], 14);
     else if (pts.length > 1) map.fitBounds(L.latLngBounds(pts).pad(0.18));
+
+    // 更新降级路线
+    renderFallbackRoutes();
+  }
+
+  function setActiveTab(tab) {
+    // 从 app.js 中复用，或手动触发
+    var btn = tab === 'map' ? document.getElementById('tabMap') : document.getElementById('tabItinerary');
+    if (btn) btn.click();
   }
 
   function buildFilterUI() {
@@ -125,6 +228,18 @@
     });
   }
 
+  // 暴露给 app.js：点击 Timeline 地点时飞至地图 Marker
+  window.flyToSpot = function (dayId, spotIndex) {
+    if (!map) return;
+    var key = dayId + '-' + spotIndex;
+    var m = markersBySpot[key];
+    if (m) {
+      var latlng = m.getLatLng();
+      map.flyTo(latlng, 16, { duration: 0.8 });
+      m.openPopup();
+    }
+  };
+
   window.ensureMap = function () {
     if (!mapReady) {
       mapReady = true;
@@ -132,6 +247,6 @@
       buildFilterUI();
       return;
     }
-    if (map) setTimeout(function () { map.invalidateSize(); }, 40);
+    if (map) setTimeout(function () { map.invalidateSize(); }, 60);
   };
 })();

@@ -1,16 +1,36 @@
-/* ===== 行程唯一数据源：主清单 / 地点概览 / 地图标记均由此渲染 =====
- * next: 到下一站的交通说明
- *   mode: 'walk'    步行 → 前往下一站按钮 travelmode=walking
- *         'grab'    建议 Grab → 按钮打开起终点导航（不指定模式），文案写明建议 Grab
- *         'transit' 公共交通（MRT/LRT/Ekspres/巴士）→ 不生成驾车/步行导航链接，只显示文字说明
- *         'none'    当天最后一站
- */
+/* ===== Malaysia Trip — 单一数据源（行程 / 概览 / 地图 / 餐厅 均由此渲染） ===== */
 const TRIP = {
-  startDate: '2026-10-02',
-  endDate: '2026-10-06',
+  meta: {
+    title: 'Malaysia Trip',
+    subtitle: '马来西亚五天四夜',
+    dates: '2026.10.02 – 2026.10.06',
+    travelers: 2,
+    durationDays: 5,
+    durationNights: 4,
+    originCity: '杭州',
+    destinationCity: 'Kuala Lumpur',
+    heroImage: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1200&q=80&auto=format&fit=crop',
+    heroImageAlt: 'Petronas Twin Towers at night, Kuala Lumpur',
+    heroImageCredit: 'Unsplash'
+  },
+  hotel: {
+    name: 'MOV Hotel Kuala Lumpur',
+    zhName: 'MOV Hotel 吉隆坡',
+    address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+    lat: 3.1462, lng: 101.7097,
+    checkIn: '15:00',
+    checkOut: '12:00',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+    imageAlt: 'Boutique hotel exterior in Kuala Lumpur',
+    imageCredit: 'Unsplash',
+    nearestMRT: 'Bukit Bintang MRT / Monorail Station',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=MOV+Hotel+Kuala+Lumpur'
+  },
   days: [
     {
-      id: 1, num: '02', date: '02 October', title: '抵达吉隆坡', theme: '抵达 × 入住 × 夜市',
+      id: 1, num: '02', date: '02 October', weekday: 'Friday',
+      title: '抵达吉隆坡', theme: '抵达 × 入住 × 夜市',
+      summary: { spots: 5, walks: '约 2 km', grabs: 1, budget: 'RM 80–120 / 人' },
       transport: {
         mode: '🚄 KLIA Ekspres + Grab', tag: '机场交通',
         from: { code: 'KUL T1', sub: '吉隆坡机场第一航站楼' },
@@ -19,20 +39,68 @@ const TRIP = {
         note: '机场进城建议 KLIA Ekspres 至 KL Sentral（约 33 分钟，约 15–20 分钟一班，以现场为准），再换 Grab 前往酒店。'
       },
       spots: [
-        { emoji: '🛬', zh: '吉隆坡国际机场 T1', en: 'Kuala Lumpur International Airport T1', note: '入境 + 提取行李', lat: 2.7456, lng: 101.7099,
-          next: { mode: 'transit', text: 'KLIA Ekspres 至 KL Sentral（约 33 分钟），再换 Grab 至酒店' } },
-        { emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur', note: '入住及放行李', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'walk', text: '步行至武吉免登商圈' } },
-        { emoji: '🌃', zh: '武吉免登', en: 'Bukit Bintang', note: '商圈主干道，熟悉环境', lat: 3.1459, lng: 101.7117,
-          next: { mode: 'walk', text: '步行至 Pavilion' } },
-        { emoji: '🛍️', zh: 'Pavilion 吉隆坡', en: 'Pavilion Kuala Lumpur', note: '商场及晚餐', lat: 3.1486, lng: 101.7136,
-          next: { mode: 'walk', text: '步行至阿罗街（约 10 分钟）' } },
-        { emoji: '🍜', zh: '阿罗街', en: 'Jalan Alor Food Street', note: '夜市晚餐', lat: 3.1434, lng: 101.7080,
-          next: { mode: 'walk', text: '步行返回酒店' } }
+        { type: 'transit', emoji: '🛬', zh: '吉隆坡国际机场 T1', en: 'Kuala Lumpur International Airport T1',
+          note: '入境 + 提取行李', lat: 2.7456, lng: 101.7099,
+          address: '64000 Sepang, Selangor',
+          duration: '约 1–1.5 小时（入境+取行李）', openingHours: '24 小时', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
+          imageAlt: 'KLIA Main Terminal Building', imageCredit: 'Wikimedia Commons',
+          tips: ['提前填好马来西亚入境卡（MDAC）','提取行李后跟随 signs 到 KLIA Ekspres'],
+          next: { mode: 'transit', text: 'KLIA Ekspres 至 KL Sentral（约 33 分钟），再换 Grab 至酒店' }
+        },
+        { type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+          note: '入住及放行李', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '约 30 分钟', openingHours: '入住 15:00 / 退房 12:00', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
+          tips: ['若房间未准备好可先寄存行李','酒店位于 Bukit Bintang 核心区，步行可达商圈'],
+          next: { mode: 'walk', text: '步行至武吉免登商圈（约 5 分钟）' }
+        },
+        { type: 'shopping', emoji: '🌃', zh: '武吉免登', en: 'Bukit Bintang',
+          note: '商圈主干道，熟悉环境', lat: 3.1459, lng: 101.7117,
+          address: 'Bukit Bintang, 55100 Kuala Lumpur',
+          duration: '约 30 分钟', openingHours: '全天', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bukit_Bintang_%282022%29.jpg/640px-Bukit_Bintang_%282022%29.jpg',
+          imageAlt: 'Bukit Bintang busy street at night', imageCredit: 'Wikimedia Commons',
+          tips: ['KL 最繁华的购物娱乐区','MRT Bukit Bintang 站就在附近'],
+          next: { mode: 'walk', text: '步行至 Pavilion（约 5 分钟）' }
+        },
+        { type: 'shopping', emoji: '🛍️', zh: 'Pavilion 吉隆坡', en: 'Pavilion Kuala Lumpur',
+          note: '商场及晚餐', lat: 3.1486, lng: 101.7136,
+          address: '168, Jalan Bukit Bintang, 55100 Kuala Lumpur',
+          duration: '约 1.5–2 小时', openingHours: '10:00 – 22:00', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Pavilion_KL_%282022%29.jpg/640px-Pavilion_KL_%282022%29.jpg',
+          imageAlt: 'Pavilion Kuala Lumpur exterior', imageCredit: 'Wikimedia Commons',
+          tips: ['KL 最高端商场之一','地下美食街 Food Republic 选择丰富'],
+          next: { mode: 'walk', text: '步行至阿罗街（约 10 分钟）' }
+        },
+        { type: 'food', emoji: '🍜', zh: '阿罗街', en: 'Jalan Alor Food Street',
+          note: '夜市晚餐', lat: 3.1434, lng: 101.7080,
+          address: 'Jalan Alor, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '约 1.5–2 小时', openingHours: '约 17:00 – 次日 01:00', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Jalan_Alor_%282022%29.jpg/640px-Jalan_Alor_%282022%29.jpg',
+          imageAlt: 'Jalan Alor street food stalls at night', imageCredit: 'Wikimedia Commons',
+          tips: ['现金为主（多数摊位不收卡）','推荐 Wong Ah Wah 炭烤鸡翅、Satay、Char Kway Teow','周末和节假日非常拥挤'],
+          next: { mode: 'walk', text: '步行返回酒店（约 8 分钟）' }
+        }
+      ],
+      restaurants: [
+        { meal: 'dinner', time: '约 19:00',
+          name: 'Jalan Alor 街头美食', zhName: '阿罗街夜市',
+          cuisine: '马来西亚中式街头美食', tags: ['Chinese', 'Street Food', 'Cash Only'],
+          recommendedDishes: ['Wong Ah Wah 炭烤鸡翅','Satay 沙爹','Char Kway Teow 炒粿条','Cendol 煎蕊'],
+          pricePerPerson: 'RM 25–45', openingHours: '约 17:00 – 01:00',
+          distanceFromPrev: '步行 10 分钟（从 Pavilion）',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jalan+Alor+Kuala+Lumpur',
+          backup: { name: 'Lot 10 Hutong Food Court', zhName: '十号胡同', note: '室内空调，雨天备用，同区域' }
+        }
       ]
     },
     {
-      id: 2, num: '03', date: '03 October', title: '吉隆坡市区', theme: '历史街区 × 城市地标',
+      id: 2, num: '03', date: '03 October', weekday: 'Saturday',
+      title: '吉隆坡市区', theme: '历史街区 × 城市地标',
+      summary: { spots: 7, walks: '约 4 km', grabs: 2, budget: 'RM 60–100 / 人' },
       transport: {
         mode: '🚇 MRT / LRT + 步行', tag: '市区移动',
         from: { code: '历史街区', sub: '茨厂街一带' },
@@ -41,24 +109,104 @@ const TRIP = {
         note: '市区以步行 + MRT/LRT 为主。国家博物馆 → 茨厂街可乘 Grab 或公共交通；独立广场 → KLCC 建议 MRT/LRT 或 Grab，不安排驾车。'
       },
       spots: [
-        { emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur', note: '早餐后出发', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'grab', text: '建议 Grab 前往国家博物馆' } },
-        { emoji: '🏛️', zh: '国家博物馆', en: 'National Museum of Malaysia (Muzium Negara)', note: '马来西亚历史概览', lat: 3.1383, lng: 101.6865,
-          next: { mode: 'grab', text: '建议 Grab 或公共交通前往茨厂街' } },
-        { emoji: '🏮', zh: '茨厂街', en: 'Petaling Street / Chinatown', note: '唐人街街区', lat: 3.1440, lng: 101.6970,
-          next: { mode: 'walk', text: '步行（相邻街区）' } },
-        { emoji: '🏮', zh: '鬼仔巷', en: 'Kwai Chai Hong', note: '壁画与老街空间', lat: 3.1446, lng: 101.6982,
-          next: { mode: 'walk', text: '步行至中央艺术坊（约 5 分钟）' } },
-        { emoji: '🎨', zh: '中央艺术坊', en: 'Central Market Kuala Lumpur', note: '工艺品与本地文化', lat: 3.1468, lng: 101.6957,
-          next: { mode: 'walk', text: '步行至独立广场（约 8 分钟）' } },
-        { emoji: '🏛️', zh: '独立广场', en: 'Merdeka Square', note: '历史地标（沿途可见苏丹阿都沙末大厦）', lat: 3.1478, lng: 101.6932,
-          next: { mode: 'transit', text: '建议 MRT/LRT 或 Grab 前往 KLCC，不驾车' } },
-        { emoji: '🌉', zh: '双子塔 KLCC', en: 'Petronas Twin Towers', note: '城市地标收尾', lat: 3.1580, lng: 101.7116,
-          next: { mode: 'transit', text: 'MRT 或 Grab 返回酒店' } }
+        { type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+          note: '早餐后出发', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '—', openingHours: '—', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
+          tips: [],
+          next: { mode: 'grab', text: '建议 Grab 前往国家博物馆（约 10 分钟）' }
+        },
+        { type: 'attraction', emoji: '🏛️', zh: '国家博物馆', en: 'National Museum of Malaysia (Muzium Negara)',
+          note: '马来西亚历史概览', lat: 3.1383, lng: 101.6865,
+          address: 'Jalan Damansara, Perdana Botanical Gardens, 50566 Kuala Lumpur',
+          duration: '约 1.5–2 小时', openingHours: '09:00 – 18:00', ticket: 'RM 5（马来西亚公民 RM 2）',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/National_Museum_%28Muzium_Negara%29_2023.jpg/640px-National_Museum_%28Muzium_Negara%29_2023.jpg',
+          imageAlt: 'National Museum building with traditional Malay architecture', imageCredit: 'Wikimedia Commons',
+          tips: ['主楼有 4 个展厅','建筑本身就是亮点（传统马来风格）'],
+          next: { mode: 'grab', text: '建议 Grab 或 MRT 至茨厂街（约 10–15 分钟）' }
+        },
+        { type: 'attraction', emoji: '🏮', zh: '茨厂街', en: 'Petaling Street / Chinatown',
+          note: '唐人街街区', lat: 3.1440, lng: 101.6970,
+          address: 'Jalan Petaling, City Centre, 50000 Kuala Lumpur',
+          duration: '约 45 分钟', openingHours: '约 08:00 – 22:00', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Petaling_Street_%282022%29.jpg/640px-Petaling_Street_%282022%29.jpg',
+          imageAlt: 'Petaling Street arch gate and market', imageCredit: 'Wikimedia Commons',
+          tips: ['著名牌坊和遮阳棚','假货市场+美食并存','附近有关帝庙和马里安曼庙'],
+          next: { mode: 'walk', text: '步行（约 3 分钟）' }
+        },
+        { type: 'attraction', emoji: '🏮', zh: '鬼仔巷', en: 'Kwai Chai Hong',
+          note: '壁画与老街空间', lat: 3.1446, lng: 101.6982,
+          address: 'Lorong Panggung, City Centre, 50000 Kuala Lumpur',
+          duration: '约 20–30 分钟', openingHours: '全天', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1580910533731-f52e3f382324?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Colorful street art in Kuala Lumpur alley', imageCredit: 'Unsplash',
+          tips: ['茨厂街旁的小巷','多幅创意壁画适合拍照'],
+          next: { mode: 'walk', text: '步行至中央艺术坊（约 5 分钟）' }
+        },
+        { type: 'attraction', emoji: '🎨', zh: '中央艺术坊', en: 'Central Market Kuala Lumpur',
+          note: '工艺品与本地文化', lat: 3.1468, lng: 101.6957,
+          address: 'Jalan Hang Kasturi, City Centre, 50050 Kuala Lumpur',
+          duration: '约 30–45 分钟', openingHours: '10:00 – 21:30', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Central_Market_KL_%282022%29.jpg/640px-Central_Market_KL_%282022%29.jpg',
+          imageAlt: 'Central Market KL art deco building', imageCredit: 'Wikimedia Commons',
+          tips: ['二楼 Precious Old China 是知名娘惹餐厅','适合买手信'],
+          next: { mode: 'walk', text: '步行至独立广场（约 8 分钟）' }
+        },
+        { type: 'attraction', emoji: '🏛️', zh: '独立广场', en: 'Merdeka Square',
+          note: '历史地标（沿途可见苏丹阿都沙末大厦）', lat: 3.1478, lng: 101.6932,
+          address: 'Jalan Raja, City Centre, 50050 Kuala Lumpur',
+          duration: '约 20–30 分钟', openingHours: '全天', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Merdeka_Square_%282022%29.jpg/640px-Merdeka_Square_%282022%29.jpg',
+          imageAlt: 'Merdeka Square with flagpole and Sultan Abdul Samad Building', imageCredit: 'Wikimedia Commons',
+          tips: ['世界最高旗杆（95 米）','对面是苏丹阿都沙末大厦（不必单独进入）','附近是城市画廊（可选）'],
+          next: { mode: 'transit', text: '建议 MRT/LRT 或 Grab 前往 KLCC，不驾车（约 15 分钟）' }
+        },
+        { type: 'attraction', emoji: '🌉', zh: '双子塔 KLCC', en: 'Petronas Twin Towers',
+          note: '城市地标收尾', lat: 3.1580, lng: 101.7116,
+          address: 'Kuala Lumpur City Centre, 50088 Kuala Lumpur',
+          duration: '约 1–2 小时', openingHours: '商场 10:00 – 22:00 / 空中走廊周二至日 09:00 – 17:00（周一关闭）', ticket: '空中走廊需预约购票',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Petronas_Twin_Towers.jpg/640px-Petronas_Twin_Towers.jpg',
+          imageAlt: 'Petronas Twin Towers reflecting in pool', imageCredit: 'Wikimedia Commons',
+          tips: ['夜景最佳拍摄点在 Suria KLCC 门口喷泉','KLCC Park 适合散步','空中走廊门票建议提前官网预约'],
+          next: { mode: 'transit', text: 'MRT 或 Grab 返回酒店' }
+        }
+      ],
+      restaurants: [
+        { meal: 'breakfast', time: '约 08:00',
+          name: 'Ali, Muthu & Ah Hock', zhName: '阿里姆图阿霍',
+          cuisine: '马来西亚 Kopitiam', tags: ['Halal-friendly', 'Local'],
+          recommendedDishes: ['Nasi Lemak Ayam 椰浆饭配炸鸡','Teh Tarik 拉茶'],
+          pricePerPerson: 'RM 12–18', openingHours: '08:00 – 17:00',
+          distanceFromPrev: '约 200m（从 Pasar Seni MRT / 中央市场）',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Ali+Muthu+Ah+Hock+Kuala+Lumpur',
+          backup: { name: 'Central Market 一楼 Food Court', zhName: '中央市场美食广场', note: '多种选择，空调' }
+        },
+        { meal: 'lunch', time: '约 12:30',
+          name: 'Hon Kee Porridge / Koon Kee Wantan Mee', zhName: '汉记粥品 / 坤记云吞面',
+          cuisine: '马来西亚中式', tags: ['Chinese', 'Pork'],
+          recommendedDishes: ['Hon Kee 生鱼粥','Koon Kee 云吞面配叉烧'],
+          pricePerPerson: 'RM 8–15', openingHours: 'Hon Kee 05:00–14:30 / Koon Kee 09:30–14:30',
+          distanceFromPrev: '步行范围内（茨厂街/鬼仔巷附近）',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Hon+Kee+Porridge+Kuala+Lumpur',
+          backup: { name: 'Madras Lane Curry Laksa', zhName: '马德里巷咖喱叻沙', note: '咖喱/亚参叻沙，约 RM 7–10' }
+        },
+        { meal: 'dinner', time: '约 19:00',
+          name: 'Suria KLCC / Jalan Alor', zhName: 'Suria KLCC 商场 / 阿罗街',
+          cuisine: '商场美食广场 / 街头美食', tags: ['Mixed'],
+          recommendedDishes: ['商场：各式档口','阿罗街：Satay、烤鸡翅、Cendol'],
+          pricePerPerson: 'RM 25–50', openingHours: '商场 10:00–22:00 / 阿罗街 17:00–01:00',
+          distanceFromPrev: 'MRT/Grab 返回 Bukit Bintang 区域',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Suria+KLCC+Food+Court',
+          backup: { name: 'Pavilion KL Food Republic', zhName: 'Pavilion 大食代', note: '室内空调，雨天备用' }
+        }
       ]
     },
     {
-      id: 3, num: '04', date: '04 October', title: '马六甲', theme: '马六甲文化一日游',
+      id: 3, num: '04', date: '04 October', weekday: 'Sunday',
+      title: '马六甲', theme: '马六甲文化一日游',
+      summary: { spots: 7, walks: '约 3 km', grabs: 2, budget: 'RM 100–150 / 人（含巴士）' },
       transport: {
         mode: '🚌 长途巴士', tag: '跨城交通',
         from: { code: 'TBS', sub: '吉隆坡南湖镇车站' },
@@ -67,24 +215,104 @@ const TRIP = {
         note: '吉隆坡—马六甲仅以长途巴士接驳（不驾车、不 Grab）。TBS 与 Melaka Sentral 为交通节点，不入正式行程；班次以现场为准。市区景点间步行串联。'
       },
       spots: [
-        { emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur', note: '早餐后出发，行李寄存前台', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'transit', text: 'Grab/地铁至 TBS → 长途巴士（约 2–2.5 小时）→ Melaka Sentral → Grab 进古城' } },
-        { emoji: '🏛️', zh: '马六甲红屋', en: 'Dutch Square / The Stadthuys', note: '荷兰广场历史核心', lat: 2.1940, lng: 102.2490,
-          next: { mode: 'walk', text: '步行（相邻街区）' } },
-        { emoji: '🏠', zh: '峇峇娘惹祖屋', en: 'Baba & Nyonya Heritage Museum', note: '土生华人宅邸博物馆', lat: 2.1956, lng: 102.2462,
-          next: { mode: 'walk', text: '步行至圣保罗山' } },
-        { emoji: '⛪', zh: '圣保罗山', en: "St. Paul's Hill Melaka", note: '俯瞰古城（山下可顺路看 A Famosa 遗门）', lat: 2.1935, lng: 102.2495,
-          next: { mode: 'walk', text: '步行至青云亭' } },
-        { emoji: '🛕', zh: '青云亭', en: 'Cheng Hoon Teng Temple', note: '马来西亚最古老华人寺庙', lat: 2.1955, lng: 102.2464,
-          next: { mode: 'walk', text: '步行至游船码头' } },
-        { emoji: '🛶', zh: '马六甲河游船', en: 'Melaka River Cruise', note: '傍晚场次光线较好', lat: 2.1944, lng: 102.2468,
-          next: { mode: 'walk', text: '步行过桥即鸡场街' } },
-        { emoji: '🏮', zh: '鸡场街夜市', en: 'Jonker Street Night Market', note: '老街夜市（周五至周日晚）', lat: 2.1967, lng: 102.2460,
-          next: { mode: 'transit', text: '夜市后 Grab 至 Melaka Sentral → 长途巴士返吉隆坡' } }
+        { type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+          note: '早餐后出发，行李寄存前台', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '—', openingHours: '—', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
+          tips: ['行李寄存前台','轻装前往马六甲'],
+          next: { mode: 'transit', text: 'Grab/地铁至 TBS → 长途巴士（约 2–2.5 小时）→ Melaka Sentral → Grab 进古城' }
+        },
+        { type: 'attraction', emoji: '🏛️', zh: '马六甲红屋', en: 'Dutch Square / The Stadthuys',
+          note: '荷兰广场历史核心', lat: 2.1940, lng: 102.2490,
+          address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
+          duration: '约 30–45 分钟', openingHours: '约 09:00 – 17:30', ticket: '广场免费， Stadthuys 博物馆约 RM 10',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Stadthuys_Melaka.jpg/640px-Stadthuys_Melaka.jpg',
+          imageAlt: 'Red Stadthuys building in Dutch Square Melaka', imageCredit: 'Wikimedia Commons',
+          tips: ['标志性红色建筑','广场中央有维多利亚女王喷泉','旁边是基督教堂'],
+          next: { mode: 'walk', text: '步行（约 3 分钟）' }
+        },
+        { type: 'attraction', emoji: '🏠', zh: '峇峇娘惹祖屋', en: 'Baba & Nyonya Heritage Museum',
+          note: '土生华人宅邸博物馆', lat: 2.1956, lng: 102.2462,
+          address: '48-50, Jalan Tun Tan Cheng Lock, 75200 Malacca',
+          duration: '约 45 分钟–1 小时', openingHours: '10:00 – 16:15（周一关闭）', ticket: '约 RM 18',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Baba_Nyonya_Heritage_Museum.jpg/640px-Baba_Nyonya_Heritage_Museum.jpg',
+          imageAlt: 'Baba Nyonya Heritage Museum interior courtyard', imageCredit: 'Wikimedia Commons',
+          tips: ['需跟随导览（有指定时间）','内部禁止拍照'],
+          next: { mode: 'walk', text: '步行至圣保罗山（约 8 分钟）' }
+        },
+        { type: 'attraction', emoji: '⛪', zh: '圣保罗山', en: "St. Paul's Hill Melaka",
+          note: '俯瞰古城（山下可顺路看 A Famosa 遗门）', lat: 2.1935, lng: 102.2495,
+          address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
+          duration: '约 30–45 分钟', openingHours: '全天', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/St._Paul%27s_Church_Melaka.jpg/640px-St._Paul%27s_Church_Melaka.jpg',
+          imageAlt: 'St. Paul Church ruins on hilltop overlooking Malacca', imageCredit: 'Wikimedia Commons',
+          tips: ['山顶可俯瞰马六甲全城','下山时顺路看 A Famosa 古城门遗骸（不单独编号）'],
+          next: { mode: 'walk', text: '步行至青云亭（约 5 分钟）' }
+        },
+        { type: 'attraction', emoji: '🛕', zh: '青云亭', en: 'Cheng Hoon Teng Temple',
+          note: '马来西亚最古老华人寺庙', lat: 2.1955, lng: 102.2464,
+          address: '25, Jalan Tokong, 75200 Malacca',
+          duration: '约 20 分钟', openingHours: '约 07:00 – 19:00', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Cheng_Hoon_Teng_Temple.jpg/640px-Cheng_Hoon_Teng_Temple.jpg',
+          imageAlt: 'Cheng Hoon Teng Temple traditional Chinese architecture', imageCredit: 'Wikimedia Commons',
+          tips: ['马来西亚最古老华人寺庙','建筑精美，可静静参观'],
+          next: { mode: 'walk', text: '步行至游船码头（约 5 分钟）' }
+        },
+        { type: 'attraction', emoji: '🛶', zh: '马六甲河游船', en: 'Melaka River Cruise',
+          note: '傍晚场次光线较好', lat: 2.1944, lng: 102.2468,
+          address: 'Jalan Persisiran Bunga Raya, 75100 Malacca',
+          duration: '约 45 分钟', openingHours: '约 09:00 – 22:30', ticket: '约 RM 30（成人）',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Melaka_River_Cruise.jpg/640px-Melaka_River_Cruise.jpg',
+          imageAlt: 'Colorful buildings along Melaka River with cruise boat', imageCredit: 'Wikimedia Commons',
+          tips: ['傍晚 17:00–18:30 光线最佳','沿河可看到彩色壁画建筑'],
+          next: { mode: 'walk', text: '步行过桥即鸡场街（约 3 分钟）' }
+        },
+        { type: 'food', emoji: '🏮', zh: '鸡场街夜市', en: 'Jonker Street Night Market',
+          note: '老街夜市（周五至周日晚）', lat: 2.1967, lng: 102.2460,
+          address: 'Jalan Hang Jebat, 75200 Malacca',
+          duration: '约 1.5–2 小时', openingHours: '周五至周日 约 18:00 – 00:00', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Jonker_Street_Night_Market.jpg/640px-Jonker_Street_Night_Market.jpg',
+          imageAlt: 'Jonker Street crowded night market with food stalls', imageCredit: 'Wikimedia Commons',
+          tips: ['仅周五至周日晚上开放','推荐 Jonker 88 叻沙、Cendol、Popiah'],
+          next: { mode: 'transit', text: '夜市后 Grab 至 Melaka Sentral → 长途巴士返吉隆坡' }
+        }
+      ],
+      restaurants: [
+        { meal: 'breakfast', time: '约 07:30',
+          name: '酒店附近轻食 / TBS 车站', zhName: '酒店或车站简餐',
+          cuisine: '轻食', tags: ['Quick'],
+          recommendedDishes: ['酒店早餐或附近 Kopitiam'],
+          pricePerPerson: 'RM 8–15', openingHours: '视地点',
+          distanceFromPrev: '酒店内或附近',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=breakfast+near+Bukit+Bintang',
+          backup: { name: 'TBS 车站内便利店', zhName: 'TBS 便利店', note: '上车前简单解决' }
+        },
+        { meal: 'lunch', time: '约 12:30',
+          name: 'Jonker 88', zhName: '大宝小食',
+          cuisine: 'Nyonya / Peranakan', tags: ['Halal-friendly', 'Queue Expected'],
+          recommendedDishes: ['Nyonya Asam Laksa 亚参叻沙','Baba Laksa  Baba 叻沙','Cendol Gula Melaka 煎蕊椰糖'],
+          pricePerPerson: 'RM 12–20', openingHours: '约 10:00 – 19:30',
+          distanceFromPrev: '步行 3 分钟（从红屋）',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jonker+88+Melaka',
+          backup: { name: 'Peranakan Place', zhName: 'Peranakan Place', note: '空调座位，同街，约 RM 20–40/人' }
+        },
+        { meal: 'dinner', time: '约 19:00',
+          name: '鸡场街夜市', zhName: '鸡场街夜市',
+          cuisine: '街头美食', tags: ['Street Food', 'Weekend Only'],
+          recommendedDishes: ['Popiah 薄饼','Satay 沙爹','Cendol 煎蕊','Nyonya Kuih 娘惹糕'],
+          pricePerPerson: 'RM 15–30', openingHours: '周五至周日 约 18:00 – 00:00',
+          distanceFromPrev: '步行过桥（从游船码头）',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jonker+Street+Night+Market+Melaka',
+          backup: { name: 'Jonker Kitchen', zhName: 'Jonker Kitchen', note: '空调座位有限，约 RM 20–40/人' }
+        }
       ]
     },
     {
-      id: 4, num: '05', date: '05 October', title: '黑风洞 × TRX', theme: '舒服优先 × 黑风洞 × 购物',
+      id: 4, num: '05', date: '05 October', weekday: 'Monday',
+      title: '黑风洞 × TRX', theme: '舒服优先 × 黑风洞 × 购物',
+      summary: { spots: 5, walks: '约 2 km', grabs: 3, budget: 'RM 50–100 / 人' },
       transport: {
         mode: '🚗 Grab（叫车）', tag: '往返黑风洞',
         from: { code: 'MOV Hotel', sub: '武吉免登' },
@@ -93,20 +321,86 @@ const TRIP = {
         note: '黑风洞往返建议 Grab（备选：KTM Komuter 至 Batu Caves 站，仅作参考）。约 20–30 分钟，视路况。'
       },
       spots: [
-        { emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur', note: '早餐后出发', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'grab', text: '建议 Grab 前往黑风洞（约 20–30 分钟）' } },
-        { emoji: '🛕', zh: '黑风洞', en: 'Batu Caves', note: '彩虹阶梯 + 印度教圣地，留意猴子', lat: 3.2374, lng: 101.6839,
-          next: { mode: 'grab', text: '建议 Grab 返回酒店' } },
-        { emoji: '🍽️', zh: '午餐并返回酒店休息', en: 'Lunch & Rest at MOV Hotel', note: '舒服优先，午后避暑', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'walk', text: '步行/短程 Grab 至 TRX' } },
-        { emoji: '🏙️', zh: 'The Exchange TRX', en: 'The Exchange TRX', note: '新兴商圈 + 空中花园', lat: 3.1410, lng: 101.7170,
-          next: { mode: 'walk', text: '步行经连接通道至武吉免登' } },
-        { emoji: '🌃', zh: '武吉免登', en: 'Bukit Bintang', note: '购物与晚餐收尾', lat: 3.1459, lng: 101.7117,
-          next: { mode: 'walk', text: '步行返回酒店' } }
+        { type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+          note: '早餐后出发', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '—', openingHours: '—', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
+          tips: [],
+          next: { mode: 'grab', text: '建议 Grab 前往黑风洞（约 20–30 分钟）' }
+        },
+        { type: 'attraction', emoji: '🛕', zh: '黑风洞', en: 'Batu Caves',
+          note: '彩虹阶梯 + 印度教圣地，留意猴子', lat: 3.2374, lng: 101.6839,
+          address: 'Gombak, 68100 Batu Caves, Selangor',
+          duration: '约 1.5–2 小时', openingHours: '约 06:00 – 21:00', ticket: '无（ donations 自愿）',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Batu_Caves_Murugan.jpg/640px-Batu_Caves_Murugan.jpg',
+          imageAlt: 'Batu Caves colorful staircase and giant Murugan statue', imageCredit: 'Wikimedia Commons',
+          tips: ['需攀登 272 级彩虹阶梯','猴子会抢食物，不要手拿塑料袋','建议穿长裤/长裙（宗教场所）','洞内需脱鞋'],
+          next: { mode: 'grab', text: '建议 Grab 返回酒店（约 20–30 分钟）' }
+        },
+        { type: 'hotel', emoji: '🍽️', zh: '午餐并返回酒店休息', en: 'Lunch & Rest at MOV Hotel',
+          note: '舒服优先，午后避暑', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '约 2–3 小时', openingHours: '—', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Hotel room for afternoon rest', imageCredit: 'Unsplash',
+          tips: ['避开正午高温','可在酒店附近解决午餐'],
+          next: { mode: 'walk', text: '步行/短程 Grab 至 TRX（约 10 分钟）' }
+        },
+        { type: 'shopping', emoji: '🏙️', zh: 'The Exchange TRX', en: 'The Exchange TRX',
+          note: '新兴商圈 + 空中花园', lat: 3.1410, lng: 101.7170,
+          address: 'Persiaran TRX, Imbi, 55188 Kuala Lumpur',
+          duration: '约 1.5–2 小时', openingHours: '10:00 – 22:00', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Modern shopping mall interior', imageCredit: 'Unsplash',
+          tips: ['2023 年底新开的大型商场','顶楼有空中花园（TRX City Park）','有直达 Pavilion 的步行桥'],
+          next: { mode: 'walk', text: '步行经连接通道至武吉免登（约 10–15 分钟）' }
+        },
+        { type: 'shopping', emoji: '🌃', zh: '武吉免登', en: 'Bukit Bintang',
+          note: '购物与晚餐收尾', lat: 3.1459, lng: 101.7117,
+          address: 'Bukit Bintang, 55100 Kuala Lumpur',
+          duration: '约 1–2 小时', openingHours: '全天', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bukit_Bintang_%282022%29.jpg/640px-Bukit_Bintang_%282022%29.jpg',
+          imageAlt: 'Bukit Bintang busy street at night', imageCredit: 'Wikimedia Commons',
+          tips: ['最后采购手信的机会','附近有大量餐厅选择'],
+          next: { mode: 'walk', text: '步行返回酒店（约 5 分钟）' }
+        }
+      ],
+      restaurants: [
+        { meal: 'breakfast', time: '约 08:00',
+          name: '酒店附近', zhName: '酒店附近',
+          cuisine: '轻食', tags: ['Quick'],
+          recommendedDishes: ['酒店早餐或附近 Kopitiam'],
+          pricePerPerson: 'RM 8–15', openingHours: '视地点',
+          distanceFromPrev: '酒店内或附近',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=breakfast+near+Bukit+Bintang',
+          backup: { name: '便利店', zhName: '便利店', note: '7-Eleven / FamilyMart' }
+        },
+        { meal: 'lunch', time: '约 12:30',
+          name: 'Batu Caves 附近素食 / 酒店附近', zhName: '黑风洞附近素食 或 酒店附近',
+          cuisine: '印度素食 / 马来西亚', tags: ['Vegetarian', 'Halal-friendly'],
+          recommendedDishes: ['Sri Ananda Bahwan 印度素食香蕉叶饭','酒店附近 Nasi Kandar'],
+          pricePerPerson: 'RM 10–20', openingHours: '视餐厅',
+          distanceFromPrev: '黑风洞附近或返回 Bukit Bintang',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=vegetarian+restaurant+near+Batu+Caves',
+          backup: { name: 'Bukit Bintang 商场 Food Court', zhName: '武吉免登商场美食广场', note: '多种选择，空调' }
+        },
+        { meal: 'dinner', time: '约 19:00',
+          name: 'TRX / Bukit Bintang', zhName: 'TRX 或 武吉免登',
+          cuisine: '商场餐厅 / 街头美食', tags: ['Mixed'],
+          recommendedDishes: ['TRX 商场内各国餐厅','阿罗街街头美食'],
+          pricePerPerson: 'RM 25–60', openingHours: '商场 10:00–22:00 / 阿罗街 17:00–01:00',
+          distanceFromPrev: '步行/同区域',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=restaurants+in+Bukit+Bintang',
+          backup: { name: 'Pavilion KL Food Republic', zhName: 'Pavilion 大食代', note: '室内空调，雨天备用' }
+        }
       ]
     },
     {
-      id: 5, num: '06', date: '06 October', title: '返程', theme: '退房 × 机场返程',
+      id: 5, num: '06', date: '06 October', weekday: 'Tuesday',
+      title: '返程', theme: '退房 × 机场返程',
+      summary: { spots: 3, walks: '约 1 km', grabs: 1, budget: 'RM 30–50 / 人' },
       transport: {
         mode: '🚄 KLIA Ekspres', tag: '机场交通',
         from: { code: 'KL Sentral', sub: '中央车站' },
@@ -115,18 +409,58 @@ const TRIP = {
         note: 'KL Sentral — KUL T1 搭乘 KLIA Ekspres（不驾车）。约 33 分钟，约 15–20 分钟一班，以现场为准。'
       },
       spots: [
-        { emoji: '🧳', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur', note: '退房，行李随身', lat: 3.1462, lng: 101.7097,
-          next: { mode: 'grab', text: '建议 Grab 或公共交通前往 KL Sentral' } },
-        { emoji: '🚆', zh: 'KL Sentral', en: 'KL Sentral', note: '中央车站，换乘 KLIA Ekspres', lat: 3.1333, lng: 101.6867,
-          next: { mode: 'transit', text: 'KLIA Ekspres 至 KUL T1（约 33 分钟）' } },
-        { emoji: '🛫', zh: '吉隆坡国际机场 T1', en: 'Kuala Lumpur International Airport T1', note: '办理登机，返程', lat: 2.7456, lng: 101.7099,
-          next: { mode: 'none', text: '' } }
+        { type: 'hotel', emoji: '🧳', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+          note: '退房，行李随身', lat: 3.1462, lng: 101.7097,
+          address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
+          duration: '约 30 分钟', openingHours: '退房 12:00', ticket: '无',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
+          imageAlt: 'Hotel lobby check out', imageCredit: 'Unsplash',
+          tips: ['确认无遗漏物品','可请前台帮忙叫 Grab'],
+          next: { mode: 'grab', text: '建议 Grab 或 MRT 前往 KL Sentral（约 10–15 分钟）' }
+        },
+        { type: 'transit', emoji: '🚆', zh: 'KL Sentral', en: 'KL Sentral',
+          note: '中央车站，换乘 KLIA Ekspres', lat: 3.1333, lng: 101.6867,
+          address: 'Jalan Stesen Sentral, 50470 Kuala Lumpur',
+          duration: '约 20 分钟（候车+换乘）', openingHours: '05:00 – 00:30', ticket: 'KLIA Ekspres 约 RM 55（成人单程）',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/KL_Sentral_Station.jpg/640px-KL_Sentral_Station.jpg',
+          imageAlt: 'KL Sentral modern transit hub interior', imageCredit: 'Wikimedia Commons',
+          tips: ['KLIA Ekspres 售票处位于车站内','建议预留 30 分钟缓冲时间'],
+          next: { mode: 'transit', text: 'KLIA Ekspres 至 KUL T1（约 33 分钟）' }
+        },
+        { type: 'transit', emoji: '🛫', zh: '吉隆坡国际机场 T1', en: 'Kuala Lumpur International Airport T1',
+          note: '办理登机，返程', lat: 2.7456, lng: 101.7099,
+          address: '64000 Sepang, Selangor',
+          duration: '约 1.5–2 小时（值机+安检+出境）', openingHours: '24 小时', ticket: '无',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
+          imageAlt: 'KLIA Main Terminal Building departure hall', imageCredit: 'Wikimedia Commons',
+          tips: ['国际航班建议提前 3 小时到达','机场内有餐厅和免税店'],
+          next: { mode: 'none', text: '' }
+        }
+      ],
+      restaurants: [
+        { meal: 'breakfast', time: '约 08:00',
+          name: '酒店附近', zhName: '酒店附近',
+          cuisine: '轻食', tags: ['Quick'],
+          recommendedDishes: ['酒店早餐或附近 Kopitiam'],
+          pricePerPerson: 'RM 8–15', openingHours: '视地点',
+          distanceFromPrev: '酒店内或附近',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=breakfast+near+Bukit+Bintang',
+          backup: { name: '便利店', zhName: '便利店', note: '7-Eleven / FamilyMart' }
+        },
+        { meal: 'lunch', time: '约 12:00',
+          name: 'KUL T1 机场', zhName: '吉隆坡机场 T1',
+          cuisine: '机场美食', tags: ['Mixed'],
+          recommendedDishes: ['机场 Food Court 各式档口','Old Town White Coffee 白咖啡'],
+          pricePerPerson: 'RM 20–40', openingHours: '约 06:00 – 23:00',
+          distanceFromPrev: '机场内',
+          googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=food+court+KLIA+Terminal+1',
+          backup: { name: '机场便利店', zhName: '机场便利店', note: '7-Eleven / Starbucks' }
+        }
       ]
     }
   ],
-  // 仅地图使用的交通节点（不进入正式行程）
   transitNodes: [
-    { name: 'TBS 南湖镇车站', lat: 3.0750, lng: 101.7110, day: 3 },
-    { name: 'Melaka Sentral 马六甲中央车站', lat: 2.2207, lng: 102.2507, day: 3 }
+    { name: 'TBS 南湖镇车站', lat: 3.0750, lng: 101.7110, day: 3, type: 'transit' },
+    { name: 'Melaka Sentral 马六甲中央车站', lat: 2.2207, lng: 102.2507, day: 3, type: 'transit' }
   ]
 };

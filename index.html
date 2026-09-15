@@ -84,7 +84,10 @@
   <main class="main-content">
 
     <!-- ===================== 行程 Tab（内容由 app.js 从 data.js 渲染） ===================== -->
-    <div class="tab-content active" id="tabContentItinerary" role="tabpanel"></div>
+    <div class="tab-content active" id="tabContentItinerary" role="tabpanel">
+      <!-- 酒店信息卡片（固定顶部） -->
+      <div id="hotelCard"></div>
+    </div>
 
     <!-- ===================== 地图 Tab ===================== -->
     <div class="tab-content" id="tabContentMap" role="tabpanel">
@@ -102,6 +105,13 @@
           <button class="filter-btn" data-day="5">D5</button>
         </div>
         <div id="map" class="map"></div>
+        <div id="mapFallback" hidden>
+          <div class="map-fallback-head">
+            <h3>🗺️ 地图暂时无法加载</h3>
+            <p>网络或地图服务暂时不可用，行程信息不受影响。</p>
+          </div>
+          <div id="mapFallbackRoutes"></div>
+        </div>
         <p class="map-offline-hint" id="mapOfflineHint" hidden>地图瓦片暂时不可用（可能离线），行程文字不受影响。</p>
       </section>
     </div><!-- /地图 tab -->
