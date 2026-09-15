@@ -498,8 +498,15 @@
   /* ---------- Service Worker ---------- */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function () {});
-      // 新 SW 激活后自动刷新页面，确保用户看到最新版本
+      navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
+        // 注册成功后立即检查是否有等待中的 SW，有则强制激活
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        // 定期检查更新（每 60 秒）
+        setInterval(function () { reg.update(); }, 60000);
+      }).catch(function () {});
+      // 新 SW 激活后自动刷新页面
       navigator.serviceWorker.addEventListener('controllerchange', function () {
         window.location.reload();
       });
