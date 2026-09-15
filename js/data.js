@@ -104,37 +104,44 @@ const TRIP = {
     {
       id: 2, num: '03', date: '03 October', weekday: 'Saturday',
       title: '历史与都市', theme: '马来西亚历史 → 华人老城 → 独立历史 → 现代吉隆坡', intensity: 4,
-      summary: { spots: 7, walks: '约 4 km', grabs: 2, budget: 'RM 60–100 / 人' },
+      summary: { spots: 10, walks: '约 4 km', grabs: 3, budget: 'RM 60–100 / 人' },
       transport: {
         mode: '🚇 MRT / LRT + 步行', tag: '市区移动',
-        from: { code: '历史街区', sub: '茨厂街一带' },
+        from: { code: 'MOV Hotel', sub: '先前往黑风洞' },
         mid: { icon: '🚇', dur: '视路段' },
         to: { code: 'KLCC', sub: '双子塔一带' },
-        note: '市区以 MRT/LRT + 步行为主。独立广场 → MOV 建议 Grab。'
+        note: '早上 MOV → 黑风洞建议 Grab；黑风洞 → 国家博物馆建议 Grab。老城区内部步行，独立广场 → MOV 用 Grab，休息后再乘 MRT/Grab 去 KLCC。'
       },
       spots: [
-        { time: '08:15', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+        { time: '07:00', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
           note: '早餐：咖椰吐司 + 半熟蛋 + 白咖啡', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
-          duration: '约 30 分钟', openingHours: '—', ticket: '无',
+          duration: '约 1 小时', openingHours: '—', ticket: '无',
           tips: [],
-          next: { mode: 'transit', text: 'MRT 至 Muzium Negara' }
+          next: { mode: 'grab', text: 'Grab 前往黑风洞（约 30–40 分钟）' }
         },
-        { time: '09:30', type: 'attraction', emoji: '🏛️', zh: '马来西亚国家博物馆', en: 'Muzium Negara',
+        { time: '08:30', type: 'attraction', emoji: '🛕', zh: '黑风洞', en: 'Batu Caves',
+          note: '彩虹阶梯 + 印度教圣地；建议控制在约 70 分钟', lat: 3.2374, lng: 101.6839,
+          address: 'Gombak, 68100 Batu Caves, Selangor',
+          duration: '约 70 分钟', openingHours: '约 06:00 – 21:00', ticket: '无',
+          tips: ['272 级彩虹阶梯','猴子会抢食物','穿长裤/长裙','下雨台阶滑'],
+          next: { mode: 'grab', text: 'Grab 前往国家博物馆（约 30–40 分钟）' }
+        },
+        { time: '10:15', type: 'attraction', emoji: '🏛️', zh: '马来西亚国家博物馆', en: 'Muzium Negara',
           note: '确定保留的博物馆', lat: 3.1383, lng: 101.6865,
           address: 'Jalan Damansara, Perdana Botanical Gardens, 50566 Kuala Lumpur',
           duration: '约 2 小时', openingHours: '09:00 – 18:00', ticket: 'RM 5',
           tips: ['重点：马来半岛早期历史、马六甲苏丹国、殖民史、华人印度人迁移、独立','优先中文自助导览','为明天马六甲做准备'],
-          next: { mode: 'transit', text: 'MRT 至 Pasar Seni（约 10 分钟）' }
+          next: { mode: 'transit', text: 'MRT 前往 Pasar Seni（约 10 分钟）' }
         },
-        { time: '12:00', type: 'food', emoji: '🍚', zh: '午餐：海南鸡饭', en: 'Hainanese Chicken Rice',
+        { time: '12:15', type: 'food', emoji: '🍚', zh: '午餐：海南鸡饭', en: 'Hainanese Chicken Rice',
           note: 'Pasar Seni 附近', lat: 3.1450, lng: 101.6960,
           address: 'Pasar Seni 附近',
           duration: '约 50 分钟', openingHours: '—', ticket: '约 RM 25–40 / 两人',
           tips: ['午餐后前往茨厂街'],
           next: { mode: 'walk', text: '步行至茨厂街' }
         },
-        { time: '12:50', type: 'attraction', emoji: '🏮', zh: '茨厂街', en: 'Petaling Street / Chinatown',
+        { time: '13:00', type: 'attraction', emoji: '🏮', zh: '茨厂街', en: 'Petaling Street / Chinatown',
           note: '唐人街街区', lat: 3.1440, lng: 101.6970,
           address: 'Jalan Petaling, City Centre, 50000 Kuala Lumpur',
           duration: '约 35 分钟', openingHours: '约 08:00 – 22:00', ticket: '无',
@@ -148,28 +155,28 @@ const TRIP = {
           tips: ['多幅创意壁画适合拍照'],
           next: { mode: 'walk', text: '步行至中央艺术坊（约 5 分钟）' }
         },
-        { time: '14:05', type: 'attraction', emoji: '🎨', zh: '中央艺术坊', en: 'Central Market Kuala Lumpur',
+        { time: '13:55', type: 'attraction', emoji: '🎨', zh: '中央艺术坊', en: 'Central Market Kuala Lumpur',
           note: '天热/下雨时的室内缓冲', lat: 3.1468, lng: 101.6957,
           address: 'Jalan Hang Kasturi, City Centre, 50050 Kuala Lumpur',
           duration: '约 45 分钟', openingHours: '10:00 – 21:30', ticket: '无',
           tips: ['二楼 Precious Old China 是知名娘惹餐厅','适合买手信'],
           next: { mode: 'walk', text: '步行至独立广场（约 8 分钟）' }
         },
-        { time: '15:00', type: 'attraction', emoji: '🏛️', zh: '独立广场', en: 'Merdeka Square',
+        { time: '14:40', type: 'attraction', emoji: '🏛️', zh: '独立广场', en: 'Merdeka Square',
           note: '独立历史地标', lat: 3.1478, lng: 101.6932,
           address: 'Jalan Raja, City Centre, 50050 Kuala Lumpur',
           duration: '约 40 分钟', openingHours: '全天', ticket: '无',
           tips: ['世界最高旗杆（95 米）','对面是苏丹阿都沙末大厦'],
           next: { mode: 'grab', text: 'Grab 返回 MOV 休息（约 15 分钟）' }
         },
-        { time: '16:05', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+        { time: '15:40', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
           note: '酒店休息 / 洗澡 / 换衣 / 空调 / 补水（必须保留）', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
-          duration: '约 70 分钟', openingHours: '—', ticket: '无',
+          duration: '约 1.5 小时', openingHours: '—', ticket: '无',
           tips: ['避开正午高温','休整后再出发'],
           next: { mode: 'transit', text: 'MRT 至 KLCC（约 15 分钟）' }
         },
-        { time: '18:00', type: 'attraction', emoji: '🌉', zh: '双子塔 KLCC', en: 'Petronas Twin Towers',
+        { time: '18:30', type: 'attraction', emoji: '🌉', zh: '双子塔 KLCC', en: 'Petronas Twin Towers',
           image: 'img/petronas-towers.webp', imageAlt: 'Petronas Twin Towers skyline',
           imageCredit: 'Petronas Twin Towers official website', imageSource: 'https://www.petronastwintowers.com.my/',
           note: '观景台 + 夜景', lat: 3.1580, lng: 101.7116,
@@ -198,7 +205,7 @@ const TRIP = {
           googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Hainanese+Chicken+Rice+Pasar+Seni',
           backup: { name: 'Central Market Food Court', zhName: '中央市场美食广场', note: '多种选择' }
         },
-        { meal: 'dinner', time: '约 19:45',
+        { meal: 'dinner', time: '约 20:15',
           name: 'Suria KLCC / 阿罗街', zhName: 'Suria KLCC 或 阿罗街',
           cuisine: '商场美食 / 街头美食', tags: ['Mixed'],
           recommendedDishes: ['商场：各式档口','阿罗街：Satay、烤鸡翅、Cendol'],
@@ -212,65 +219,79 @@ const TRIP = {
     {
       id: 3, num: '04', date: '04 October', weekday: 'Sunday',
       title: '马六甲', theme: '马六甲文化一日游（最累一天）', intensity: 5,
-      summary: { spots: 7, walks: '约 3 km', grabs: 2, budget: 'RM 100–150 / 人（含巴士）', endTime: '约 00:10' },
+      summary: { spots: 9, walks: '约 3 km', grabs: 2, budget: 'RM 100–150 / 人（含巴士）', endTime: '约 23:30' },
       transport: {
-        mode: '🚌 长途巴士', tag: '跨城交通',
-        from: { code: 'TBS', sub: '吉隆坡南湖镇车站' },
+        mode: '🚇 Monorail + LRT + 长途巴士', tag: '跨城交通',
+        from: { code: 'MOV Hotel', sub: '步行至 Bukit Bintang 站' },
         mid: { icon: '🚌', dur: '约 2.5–3 小时' },
         to: { code: 'Melaka Sentral', sub: '马六甲中央车站' },
-        note: '吉隆坡—马六甲以长途巴士接驳。去程从 TBS 到 Melaka Sentral；回程从 Melaka Sentral 回 TBS，再用 Grab 回 MOV。两段巴士都建议提前网上买票。'
+        note: '去程尽量不打车：Bukit Bintang → Monorail Hang Tuah → LRT Bandar Tasik Selatan，走连接通道到 TBS，再乘巴士到 Melaka Sentral。回程从 Melaka Sentral 回 TBS，再根据时间选择公共交通或直接 Grab 回 MOV。两段巴士都建议提前网上买票。'
       },
       spots: [
-        { time: '07:30', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
+        { time: '06:30', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
           note: '早餐：椰浆饭，行李寄存前台', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '—', openingHours: '—', ticket: '无',
           tips: ['行李寄存前台','轻装前往马六甲'],
-          next: { mode: 'transit', text: 'Grab 至 TBS → 长途巴士（约 2.5–3 小时）→ Melaka Sentral → Grab 进古城' }
+          next: { mode: 'transit', text: '步行至 Bukit Bintang 站 → Monorail 至 Hang Tuah → 换 LRT 至 Bandar Tasik Selatan → 走连接通道进入 TBS' }
         },
-        { time: '11:40', type: 'attraction', emoji: '🏛️', zh: '马六甲红屋', en: 'Dutch Square / The Stadthuys',
+        { time: '08:30', type: 'transit', emoji: '🚌', zh: 'TBS 南湖镇车站', en: 'Terminal Bersepadu Selatan',
+          note: '搭乘提前购买的长途巴士前往马六甲', lat: 3.0750, lng: 101.7110,
+          address: 'Bandar Tasik Selatan, 57100 Kuala Lumpur',
+          duration: '约 2.5–3 小时', openingHours: '—', ticket: '提前购票',
+          tips: ['建议至少提前 20–30 分钟到站','确认目的地为 Melaka Sentral'],
+          next: { mode: 'transit', text: '长途巴士前往 Melaka Sentral（约 2.5–3 小时）' }
+        },
+        { time: '11:00', type: 'transit', emoji: '🚏', zh: 'Melaka Sentral 马六甲中央车站', en: 'Melaka Sentral',
+          note: '到站后搭 Grab 进入 Dutch Square', lat: 2.2207, lng: 102.2507,
+          address: 'Jalan Tun Abdul Razak, 75400 Melaka',
+          duration: '约 15–20 分钟', openingHours: '—', ticket: '—',
+          tips: ['回程也从这里搭巴士回 TBS','不要把车站和古城步行区混淆'],
+          next: { mode: 'grab', text: 'Grab 前往 Dutch Square 红屋广场（约 15–20 分钟）' }
+        },
+        { time: '11:30', type: 'attraction', emoji: '🏛️', zh: '马六甲红屋', en: 'Dutch Square / The Stadthuys',
           note: '荷兰广场历史核心', lat: 2.1940, lng: 102.2490,
           address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
           duration: '约 40 分钟', openingHours: '约 09:00 – 17:30', ticket: '广场免费， Stadthuys 博物馆约 RM 10',
           tips: ['标志性红色建筑','广场中央有维多利亚女王喷泉'],
           next: { mode: 'walk', text: '步行（约 3 分钟）' }
         },
-        { time: '13:25', type: 'attraction', emoji: '🏠', zh: '峇峇娘惹祖屋', en: 'Baba & Nyonya Heritage Museum',
+        { time: '13:00', type: 'attraction', emoji: '⛪', zh: '圣保罗山', en: "St. Paul's Hill Melaka",
+          note: '俯瞰古城', lat: 2.1935, lng: 102.2495,
+          address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
+          duration: '约 40 分钟', openingHours: '全天', ticket: '无',
+          tips: ['山顶可俯瞰马六甲全城','下山顺路看 A Famosa 遗门'],
+          next: { mode: 'walk', text: '步行至峇峇娘惹祖屋（约 8 分钟）' }
+        },
+        { time: '13:50', type: 'attraction', emoji: '🏠', zh: '峇峇娘惹祖屋', en: 'Baba & Nyonya Heritage Museum',
           note: '可选/推荐（太累可删）', lat: 2.1956, lng: 102.2462,
           address: '48-50, Jalan Tun Tan Cheng Lock, 75200 Malacca',
           duration: '约 55 分钟', openingHours: '10:00 – 16:15（周一关闭）', ticket: '约 RM 18',
           tips: ['需跟随导览','内部禁止拍照','前一晚睡不好可现场删（已有国家博物馆）'],
-          next: { mode: 'walk', text: '步行至圣保罗山（约 8 分钟）' }
+          next: { mode: 'walk', text: '步行至 Cendol / 咖啡休息（约 5 分钟）' }
         },
-        { time: '14:25', type: 'attraction', emoji: '⛪', zh: '圣保罗山', en: "St. Paul's Hill Melaka",
-          note: '俯瞰古城', lat: 2.1935, lng: 102.2495,
-          address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
-          duration: '约 50 分钟', openingHours: '全天', ticket: '无',
-          tips: ['山顶可俯瞰马六甲全城','下山顺路看 A Famosa 遗门'],
-          next: { mode: 'walk', text: '步行至 Cendol 甜品店' }
-        },
-        { time: '15:50', type: 'attraction', emoji: '🛕', zh: '青云亭', en: 'Cheng Hoon Teng Temple',
+        { time: '15:15', type: 'attraction', emoji: '🛕', zh: '青云亭', en: 'Cheng Hoon Teng Temple',
           note: '马来西亚最古老华人寺庙', lat: 2.1955, lng: 102.2464,
           address: '25, Jalan Tokong, 75200 Malacca',
           duration: '约 25 分钟', openingHours: '约 07:00 – 19:00', ticket: '无',
           tips: ['建筑精美，可静静参观'],
           next: { mode: 'walk', text: '步行至游船码头（约 5 分钟）' }
         },
-        { time: '16:25', type: 'attraction', emoji: '🛶', zh: '马六甲河游船', en: 'Melaka River Cruise',
+        { time: '16:00', type: 'attraction', emoji: '🛶', zh: '马六甲河游船', en: 'Melaka River Cruise',
           image: 'img/melaka-river.webp', imageAlt: 'Melaka River Cruise at night',
           imageCredit: 'Melaka River Cruise official website', imageSource: 'https://melakarivercruise.my/',
           note: '傍晚场次光线较好', lat: 2.1944, lng: 102.2468,
           address: 'Jalan Persisiran Bunga Raya, 75100 Malacca',
           duration: '约 50 分钟', openingHours: '约 09:00 – 22:30', ticket: '约 RM 30（成人）',
           tips: ['沿河可看到彩色壁画建筑'],
-          next: { mode: 'walk', text: '咖啡/休息（17:15–17:55）' }
+          next: { mode: 'walk', text: '咖啡馆 / 休息（17:00–17:50）' }
         },
         { time: '18:00', type: 'food', emoji: '🏮', zh: '鸡场街夜市', en: 'Jonker Street Night Market',
           note: '周末夜市（今晚是周日，晚餐直接解决）', lat: 2.1967, lng: 102.2460,
           address: 'Jalan Hang Jebat, 75200 Malacca',
-          duration: '约 2 小时 10 分钟', openingHours: '周五至周日 约 18:00 – 00:00', ticket: '无',
+          duration: '约 1 小时 40 分钟', openingHours: '周五至周日 约 18:00 – 00:00', ticket: '无',
           tips: ['推荐：Laksa、鸡饭粒、沙爹、小吃、Cendol','今晚是全程最晚一天'],
-          next: { mode: 'transit', text: '20:10 左右离开鸡场街 → Grab 到 Melaka Sentral（约 15–20 分钟）→ 搭提前买好的晚班巴士到 TBS（约 2–2.5 小时）→ TBS 出站后 Grab 回 MOV（约 20–30 分钟，预计 23:50–00:30 到酒店）' }
+          next: { mode: 'transit', text: '19:45 左右离开鸡场街 → Grab 到 Melaka Sentral（约 15–20 分钟）→ 20:30–21:00 搭提前买好的晚班巴士到 TBS（约 2–2.5 小时）→ 若公共交通仍运行，Bandar Tasik Selatan → Hang Tuah → Bukit Bintang；太晚则 TBS 直接 Grab 回 MOV，预计 23:30 左右到酒店' }
         }
       ],
       restaurants: [
@@ -292,7 +313,7 @@ const TRIP = {
           googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Nyonya+restaurant+Melaka',
           backup: { name: 'Peranakan Place', zhName: 'Peranakan Place', note: '空调座位' }
         },
-        { meal: 'snack', time: '约 15:20',
+        { meal: 'snack', time: '约 14:35',
           name: 'Cendol 甜品店', zhName: '煎蕊甜品',
           cuisine: '甜品', tags: ['Dessert'],
           recommendedDishes: ['Cendol Gula Melaka','Ais Kacang'],
@@ -314,54 +335,47 @@ const TRIP = {
     },
     {
       id: 4, num: '05', date: '05 October', weekday: 'Monday',
-      title: '黑风洞 × 动物园 × 海边', theme: '上午文化景点 → 下午海边度假', intensity: 4,
+      title: 'Zoo Negara × Lexis Hibiscus', theme: '动物园 → 波德申海边度假', intensity: 4,
       summary: { spots: 5, walks: '约 2 km', grabs: 1, budget: 'RM 180–260 / 人（含包车）' },
       transport: {
         mode: '🚗 Private Transfer / 包车', tag: '全天交通',
         from: { code: 'MOV Hotel', sub: '退房，行李放车上' },
-        mid: { icon: '🚗', dur: '黑风洞 25–35 分钟 / 动物园 30 分钟 / 波德申 2–2.5 小时' },
+        mid: { icon: '🚗', dur: '动物园约 30 分钟 / 波德申约 2–2.5 小时' },
         to: { code: 'Lexis Hibiscus', sub: '波德申海边度假村' },
-        note: 'Day 4 建议包车：MOV 退房 → Batu Caves → Zoo Negara → Lexis Hibiscus，行李全程放车上。这是用钱换舒适度的一天。'
+        note: 'Day 4 建议包车：MOV 退房 → Zoo Negara → Lexis Hibiscus，行李全程放车上。这是用钱换舒适度的一天。黑风洞已安排在 Day 2，不再重复绕路。'
       },
       spots: [
         { time: '08:30', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
           note: '早餐 + 收行李 + 退房（行李放车上）', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 30 分钟', openingHours: '退房 12:00', ticket: '无',
-          tips: ['前一晚约 00:10 才回酒店，今天 08:00 起床','行李放包车上'],
-          next: { mode: 'grab', text: '包车前往 Batu Caves（约 25–35 分钟）' }
-        },
-        { time: '09:30', type: 'attraction', emoji: '🛕', zh: '黑风洞', en: 'Batu Caves',
-          note: '彩虹阶梯 + 印度教圣地（压缩至 70 分钟）', lat: 3.2374, lng: 101.6839,
-          address: 'Gombak, 68100 Batu Caves, Selangor',
-          duration: '约 70 分钟', openingHours: '约 06:00 – 21:00', ticket: '无',
-          tips: ['272 级彩虹阶梯','猴子会抢食物','穿长裤/长裙','洞内需脱鞋','下雨台阶滑'],
+          tips: ['前一晚约 23:30 左右回酒店，今天晚起','行李放包车上'],
           next: { mode: 'grab', text: '包车前往 Zoo Negara（约 30 分钟）' }
         },
-        { time: '11:10', type: 'attraction', emoji: '🦁', zh: 'Zoo Negara 国家动物园', en: 'Zoo Negara Malaysia',
+        { time: '10:00', type: 'attraction', emoji: '🦁', zh: 'Zoo Negara 国家动物园', en: 'Zoo Negara Malaysia',
           image: 'img/zoo-negara.webp', imageAlt: 'Malayan tiger at Zoo Negara',
           imageCredit: 'Zoo Negara official website', imageSource: 'https://www.zoonegara.my/',
           note: '重点看马来西亚本土动物', lat: 3.2106, lng: 101.7578,
           address: 'Jalan Ulu Kelang, Kemensah Heights, 68000 Ampang, Selangor',
-          duration: '约 2 小时 50 分钟', openingHours: '09:00 – 17:00（16:00 最后入场）', ticket: '约 RM 45（成人）+ Tram 约 RM 14.90',
-          tips: ['必看：马来虎、马来熊、马来貘、白手长臂猿','建议坐 Tram（RM14.90/人），不要全程纯走','动物园内简单午餐（13:15–13:45）','不要平均分配时间，本土动物优先'],
+          duration: '约 3 小时', openingHours: '09:00 – 17:00（16:00 最后入场）', ticket: '约 RM 45（成人）+ Tram 约 RM 14.90',
+          tips: ['重点看马来虎、马来貘、马来熊、白手长臂猿、犀鸟','建议坐 Tram（RM14.90/人），不要全程纯走','动物园内简单午餐（13:00–13:30）','不用追求全园刷完'],
           next: { mode: 'grab', text: '包车前往 Lexis Hibiscus Port Dickson（约 2–2.5 小时）' }
         },
-        { time: '16:00', type: 'hotel', emoji: '🏨', zh: 'Lexis Hibiscus Port Dickson', en: 'Lexis Hibiscus Port Dickson',
+        { time: '15:30', type: 'hotel', emoji: '🏨', zh: 'Lexis Hibiscus Port Dickson', en: 'Lexis Hibiscus Port Dickson',
           note: 'Check-in / 放东西 / 洗脸 / 换衣 / 休息', lat: 2.5167, lng: 101.8000,
           address: '12th Mile, Jalan Pantai, 71250 Pasir Panjang, Negeri Sembilan',
           duration: '约 30 分钟', openingHours: '入住 15:00 / 退房 11:00', ticket: '无',
-          tips: ['不要一到就冲出去','16:30–17:00 房间休息'],
+          tips: ['不要一到就冲出去','先洗澡、补水、休息'],
           next: { mode: 'walk', text: '步行至海边/水上别墅区' }
         },
-        { time: '17:00', type: 'attraction', emoji: '🏖️', zh: 'Lexis Hibiscus 海边', en: 'Lexis Hibiscus Beach & Resort',
+        { time: '16:45', type: 'attraction', emoji: '🏖️', zh: 'Lexis Hibiscus 海边', en: 'Lexis Hibiscus Beach & Resort',
           note: '水上别墅区散步 / 海景 / 泳池 / 日落', lat: 2.5167, lng: 101.8000,
           address: 'Lexis Hibiscus Resort 内',
           duration: '约 2 小时', openingHours: '全天', ticket: '无',
           tips: ['水上别墅区散步','Hibiscus Walk','看日落（17:30–19:10）','拍照'],
           next: { mode: 'walk', text: '步行至酒店餐厅' }
         },
-        { time: '19:20', type: 'food', emoji: '🍽️', zh: '酒店晚餐', en: 'Lexis Hibiscus Dinner',
+        { time: '19:30', type: 'food', emoji: '🍽️', zh: '酒店晚餐', en: 'Lexis Hibiscus Dinner',
           note: 'Wave Dining / Satellite Restaurant & Bar', lat: 2.5167, lng: 101.8000,
           address: 'Lexis Hibiscus Resort 内',
           duration: '约 1 小时 20 分钟', openingHours: '约 18:00 – 22:00', ticket: '约 RM 60–120 / 人',
@@ -379,7 +393,7 @@ const TRIP = {
           googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=breakfast+near+Bukit+Bintang',
           backup: { name: '便利店', zhName: '便利店', note: '7-Eleven / FamilyMart' }
         },
-        { meal: 'lunch', time: '约 13:15',
+        { meal: 'lunch', time: '约 13:00',
           name: 'Zoo Negara 内餐厅', zhName: '动物园内餐厅',
           cuisine: '简餐', tags: ['Quick', 'In-park'],
           recommendedDishes: ['园内简餐'],
@@ -388,7 +402,7 @@ const TRIP = {
           googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Zoo+Negara+restaurant',
           backup: { name: '园内便利店', zhName: '园内便利店', note: '简单解决' }
         },
-        { meal: 'dinner', time: '约 19:20',
+        { meal: 'dinner', time: '约 19:30',
           name: 'Lexis Hibiscus Wave Dining', zhName: '丽昇酒店餐厅',
           cuisine: '国际/马来西亚', tags: ['Resort', 'Comfortable'],
           recommendedDishes: ['酒店自助/点餐'],
