@@ -50,7 +50,6 @@
         <circle cx="1280" cy="150" r="70" fill="#e8b877" opacity="0.14"/>
         <rect y="320" width="1600" height="200" fill="url(#glow)"/>
         <g fill="#08121f" opacity="0.9">
-          <!-- twin towers -->
           <g>
             <rect x="740" y="170" width="66" height="230" rx="4"/>
             <rect x="806" y="170" width="66" height="230" rx="4"/>
@@ -60,7 +59,6 @@
             <rect x="837" y="150" width="6" height="20"/>
             <rect x="806" y="250" width="66" height="12" rx="6"/>
           </g>
-          <!-- surrounding skyline -->
           <rect x="560" y="270" width="70" height="130" rx="3"/>
           <rect x="640" y="240" width="55" height="160" rx="3"/>
           <rect x="880" y="260" width="80" height="140" rx="3"/>
@@ -70,7 +68,6 @@
           <rect x="300" y="320" width="90" height="80" rx="3"/>
           <rect x="1180" y="310" width="80" height="90" rx="3"/>
           <rect x="1280" y="290" width="60" height="110" rx="3"/>
-          <!-- menara kl (tapered tower) -->
           <path d="M 705 400 h26 l-13 -150 z"/>
           <path d="M 707 252 h22 l-4 -26 h-14 z"/>
         </g>
@@ -86,433 +83,26 @@
 
   <main class="main-content">
 
-    <!-- ===================== 行程 Tab ===================== -->
-    <div class="tab-content active" id="tabContentItinerary" role="tabpanel">
-
-      <!-- ============ Day 1 ============ -->
-      <section class="day-section" id="d1">
-        <div class="day-header">
-          <div class="day-num">02</div>
-          <div class="day-info">
-            <span class="day-date">02 October</span><span class="day-title">｜抵达吉隆坡</span>
-          </div>
-        </div>
-        <p class="day-theme">抵达 × 入住 × 夜市</p>
-
-        <!-- 交通卡：机场 → 市区 -->
-        <article class="transport-card">
-          <div class="transport-head">
-            <span class="transport-mode">🚄 KLIA Ekspres + Grab</span>
-            <span class="transport-tag">机场交通</span>
-          </div>
-          <div class="transport-route">
-            <div class="route-end">
-              <span class="route-code">KUL</span>
-              <span class="route-sub">吉隆坡国际机场</span>
-            </div>
-            <div class="route-mid">
-              <span class="route-icon">🚄</span>
-              <span class="route-dur">约 33 分钟</span>
-            </div>
-            <div class="route-end route-end--right">
-              <span class="route-code">KL Sentral</span>
-              <span class="route-sub">中央车站</span>
-            </div>
-          </div>
-          <div class="transport-note">KLIA Ekspres 至 KL Sentral 后，再换 Grab 前往酒店（约 15–20 分钟，视路况）。快线约 15–20 分钟一班，以现场为准。</div>
-        </article>
-
-        <article class="event-card">
-          <h3 class="event-title">🛬 Day 1｜抵达 × 入住 × 夜市</h3>
-          <ul class="trip-list">
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d1-1">
-                <span class="todo-text"><span class="time">抵达</span>🛬 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Kuala+Lumpur+International+Airport" target="_blank" rel="noopener">吉隆坡国际机场 KUL</a>｜入境 + 提取行李</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d1-2">
-                <span class="todo-text"><span class="time">进城</span>🚄 KLIA Ekspres → <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=KL+Sentral" target="_blank" rel="noopener">KL Sentral</a>｜机场快线进城</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d1-3">
-                <span class="todo-text"><span class="time">入住</span>🏨 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=MOV+Hotel+Bukit+Bintang" target="_blank" rel="noopener">MOV Hotel</a>｜入住及放行李</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d1-4">
-                <span class="todo-text"><span class="time">逛街</span>🛍️ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Pavilion+Kuala+Lumpur" target="_blank" rel="noopener">Pavilion Kuala Lumpur</a>｜商场及晚餐</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d1-5">
-                <span class="todo-text"><span class="time">夜市</span>🍜 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Jalan+Alor+Bukit+Bintang" target="_blank" rel="noopener">Jalan Alor</a>｜夜市晚餐</span>
-              </label>
-            </li>
-          </ul>
-        </article>
-
-        <!-- 轮播（渐变封面） -->
-        <div class="photo-carousel js-photo-carousel" aria-label="Day 1 地点">
-          <div class="photo-carousel-track">
-            <div class="photo-carousel-slide cover cover--klia"><div class="cover-emoji">🛬</div><div class="cover-label">吉隆坡国际机场</div></div>
-            <div class="photo-carousel-slide cover cover--ekspres"><div class="cover-emoji">🚄</div><div class="cover-label">KLIA Ekspres</div></div>
-            <div class="photo-carousel-slide cover cover--hotel"><div class="cover-emoji">🏨</div><div class="cover-label">MOV Hotel</div></div>
-            <div class="photo-carousel-slide cover cover--pavilion"><div class="cover-emoji">🛍️</div><div class="cover-label">Pavilion KL</div></div>
-            <div class="photo-carousel-slide cover cover--alor"><div class="cover-emoji">🍜</div><div class="cover-label">Jalan Alor</div></div>
-          </div>
-          <div class="photo-carousel-dots" aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <!-- ============ Day 2 ============ -->
-      <section class="day-section" id="d2">
-        <div class="day-header">
-          <div class="day-num">03</div>
-          <div class="day-info">
-            <span class="day-date">03 October</span><span class="day-title">｜吉隆坡市区</span>
-          </div>
-        </div>
-        <p class="day-theme">历史街区 × 城市地标</p>
-
-        <article class="transport-card transport-card--mrt">
-          <div class="transport-head">
-            <span class="transport-mode">🚇 MRT / LRT + 步行</span>
-            <span class="transport-tag">市区移动</span>
-          </div>
-          <div class="transport-route">
-            <div class="route-end">
-              <span class="route-code">历史街区</span>
-              <span class="route-sub">独立广场一带</span>
-            </div>
-            <div class="route-mid">
-              <span class="route-icon">🚇</span>
-              <span class="route-dur">视路段</span>
-            </div>
-            <div class="route-end route-end--right">
-              <span class="route-code">KLCC</span>
-              <span class="route-sub">双子塔一带</span>
-            </div>
-          </div>
-          <div class="transport-note">市区景点间以 MRT/LRT + 步行为主，无需驾车。历史街区（独立广场、中央市场、茨厂街）彼此步行可达。</div>
-        </article>
-
-        <article class="event-card">
-          <h3 class="event-title">🏛️ Day 2｜历史街区 × 城市地标</h3>
-          <ul class="trip-list">
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d2-1">
-                <span class="todo-text"><span class="time">上午</span>🏛️ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Merdeka+Square+Kuala+Lumpur" target="_blank" rel="noopener">Merdeka Square 独立广场</a>｜历史街区起点</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d2-2">
-                <span class="todo-text"><span class="time">顺路</span>🏛️ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Sultan+Abdul+Samad+Building" target="_blank" rel="noopener">苏丹阿都沙末大厦</a>｜殖民地建筑外观</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d2-3">
-                <span class="todo-text"><span class="time">午餐</span>🏮 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Central+Market+Kuala+Lumpur" target="_blank" rel="noopener">Central Market</a> + <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Petaling+Street+Kuala+Lumpur" target="_blank" rel="noopener">茨厂街 Petaling Street</a>｜中央市场与唐人街</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d2-4">
-                <span class="todo-text"><span class="time">下午</span>🌉 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Petronas+Twin+Towers" target="_blank" rel="noopener">Petronas Twin Towers 双子塔</a>｜城市地标</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d2-5">
-                <span class="todo-text"><span class="time">傍晚</span>🌳 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=KLCC+Park" target="_blank" rel="noopener">KLCC Park</a>｜公园散步看夜景</span>
-              </label>
-            </li>
-          </ul>
-        </article>
-
-        <div class="photo-carousel js-photo-carousel" aria-label="Day 2 地点">
-          <div class="photo-carousel-track">
-            <div class="photo-carousel-slide cover cover--merdeka"><div class="cover-emoji">🏛️</div><div class="cover-label">独立广场</div></div>
-            <div class="photo-carousel-slide cover cover--central"><div class="cover-emoji">🏮</div><div class="cover-label">中央市场 · 茨厂街</div></div>
-            <div class="photo-carousel-slide cover cover--petronas"><div class="cover-emoji">🌉</div><div class="cover-label">双子塔</div></div>
-            <div class="photo-carousel-slide cover cover--klcc"><div class="cover-emoji">🌳</div><div class="cover-label">KLCC Park</div></div>
-          </div>
-          <div class="photo-carousel-dots" aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <!-- ============ Day 3 ============ -->
-      <section class="day-section" id="d3">
-        <div class="day-header">
-          <div class="day-num">04</div>
-          <div class="day-info">
-            <span class="day-date">04 October</span><span class="day-title">｜马六甲</span>
-          </div>
-        </div>
-        <p class="day-theme">马六甲文化一日游</p>
-
-        <!-- 交通卡：长途巴士（非驾车） -->
-        <article class="transport-card transport-card--bus">
-          <div class="transport-head">
-            <span class="transport-mode">🚌 长途巴士</span>
-            <span class="transport-tag">跨城交通</span>
-          </div>
-          <div class="transport-route">
-            <div class="route-end">
-              <span class="route-code">TBS</span>
-              <span class="route-sub">吉隆坡南湖镇车站</span>
-            </div>
-            <div class="route-mid">
-              <span class="route-icon">🚌</span>
-              <span class="route-dur">约 2–2.5 小时</span>
-            </div>
-            <div class="route-end route-end--right">
-              <span class="route-code">Melaka Sentral</span>
-              <span class="route-sub">马六甲中央车站</span>
-            </div>
-          </div>
-          <div class="transport-note">吉隆坡—马六甲仅以长途巴士接驳（不驾车）。班次频繁但以现场售票为准；回程同线反向。</div>
-        </article>
-
-        <article class="event-card">
-          <h3 class="event-title">🏛️ Day 3｜马六甲文化一日游</h3>
-          <ul class="trip-list">
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-1">
-                <span class="todo-text"><span class="time">出发</span>🚌 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Terminal+Bersepadu+Selatan+TBS" target="_blank" rel="noopener">TBS</a> → <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Melaka+Sentral" target="_blank" rel="noopener">Melaka Sentral</a>｜长途巴士出发</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-2">
-                <span class="todo-text"><span class="time">上午</span>🏛️ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Dutch+Square+Melaka" target="_blank" rel="noopener">Dutch Square 荷兰红屋</a> + 基督教堂｜历史核心</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-3">
-                <span class="todo-text"><span class="time">登高</span>⛪ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=St+Paul+Church+Melaka" target="_blank" rel="noopener">St Paul's Hill 圣保罗教堂</a>｜俯瞰古城</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-4">
-                <span class="todo-text"><span class="time">顺路</span>🏰 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=A+Famosa+Melaka" target="_blank" rel="noopener">A Famosa 爱化摩沙堡垒</a>｜古城遗址</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-5">
-                <span class="todo-text"><span class="time">下午</span>🛶 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Malacca+River" target="_blank" rel="noopener">马六甲河 Malacca River</a>｜散步或游船</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-6">
-                <span class="todo-text"><span class="time">傍晚</span>🏮 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Jonker+Street+Melaka" target="_blank" rel="noopener">Jonker Street 鸡场街</a>｜老街（周日夜市）</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d3-7">
-                <span class="todo-text"><span class="time">返程</span>🚌 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Melaka+Sentral" target="_blank" rel="noopener">Melaka Sentral</a> → TBS｜长途巴士返回</span>
-              </label>
-            </li>
-          </ul>
-        </article>
-
-        <div class="photo-carousel js-photo-carousel" aria-label="Day 3 地点">
-          <div class="photo-carousel-track">
-            <div class="photo-carousel-slide cover cover--dutch"><div class="cover-emoji">🏛️</div><div class="cover-label">荷兰红屋</div></div>
-            <div class="photo-carousel-slide cover cover--stpaul"><div class="cover-emoji">⛪</div><div class="cover-label">圣保罗教堂</div></div>
-            <div class="photo-carousel-slide cover cover--famosa"><div class="cover-emoji">🏰</div><div class="cover-label">爱化摩沙堡垒</div></div>
-            <div class="photo-carousel-slide cover cover--river"><div class="cover-emoji">🛶</div><div class="cover-label">马六甲河</div></div>
-            <div class="photo-carousel-slide cover cover--jonker"><div class="cover-emoji">🏮</div><div class="cover-label">鸡场街</div></div>
-          </div>
-          <div class="photo-carousel-dots" aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <!-- ============ Day 4 ============ -->
-      <section class="day-section" id="d4">
-        <div class="day-header">
-          <div class="day-num">05</div>
-          <div class="day-info">
-            <span class="day-date">05 October</span><span class="day-title">｜黑风洞 × TRX</span>
-          </div>
-        </div>
-        <p class="day-theme">舒服优先 × 黑风洞 × 购物</p>
-
-        <article class="transport-card transport-card--grab">
-          <div class="transport-head">
-            <span class="transport-mode">🚗 Grab（叫车）</span>
-            <span class="transport-tag">往返黑风洞</span>
-          </div>
-          <div class="transport-route">
-            <div class="route-end">
-              <span class="route-code">MOV Hotel</span>
-              <span class="route-sub">武吉免登</span>
-            </div>
-            <div class="route-mid">
-              <span class="route-icon">🚗</span>
-              <span class="route-dur">约 20–30 分钟</span>
-            </div>
-            <div class="route-end route-end--right">
-              <span class="route-code">Batu Caves</span>
-              <span class="route-sub">黑风洞</span>
-            </div>
-          </div>
-          <div class="transport-note">黑风洞往返建议 Grab（也可乘 KTM Komuter 至 Batu Caves 站）。约 20–30 分钟，视路况。</div>
-        </article>
-
-        <article class="event-card">
-          <h3 class="event-title">🛕 Day 4｜舒服优先 × 黑风洞 × 购物</h3>
-          <ul class="trip-list">
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d4-1">
-                <span class="todo-text"><span class="time">出发</span>🏨 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=MOV+Hotel+Bukit+Bintang" target="_blank" rel="noopener">MOV Hotel</a>｜早餐后出发</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d4-2">
-                <span class="todo-text"><span class="time">上午</span>🛕 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Batu+Caves" target="_blank" rel="noopener">Batu Caves 黑风洞</a>｜彩色阶梯 + 印度教圣地</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d4-3">
-                <span class="todo-text"><span class="time">午后</span>🍽️ 午餐及酒店休息｜返回酒店午休（舒服优先）</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d4-4">
-                <span class="todo-text"><span class="time">下午</span>🏙️ <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=The+Exchange+TRX" target="_blank" rel="noopener">The Exchange TRX</a>｜新兴商圈</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d4-5">
-                <span class="todo-text"><span class="time">晚间</span>🌃 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Bukit+Bintang" target="_blank" rel="noopener">Bukit Bintang 武吉免登</a>｜购物与晚餐</span>
-              </label>
-            </li>
-          </ul>
-        </article>
-
-        <div class="photo-carousel js-photo-carousel" aria-label="Day 4 地点">
-          <div class="photo-carousel-track">
-            <div class="photo-carousel-slide cover cover--batu"><div class="cover-emoji">🛕</div><div class="cover-label">黑风洞</div></div>
-            <div class="photo-carousel-slide cover cover--steps"><div class="cover-emoji">🌈</div><div class="cover-label">彩色阶梯</div></div>
-            <div class="photo-carousel-slide cover cover--trx"><div class="cover-emoji">🏙️</div><div class="cover-label">The Exchange TRX</div></div>
-            <div class="photo-carousel-slide cover cover--bukit"><div class="cover-emoji">🌃</div><div class="cover-label">武吉免登</div></div>
-          </div>
-          <div class="photo-carousel-dots" aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <!-- ============ Day 5 ============ -->
-      <section class="day-section" id="d5">
-        <div class="day-header">
-          <div class="day-num">06</div>
-          <div class="day-info">
-            <span class="day-date">06 October</span><span class="day-title">｜返程</span>
-          </div>
-        </div>
-        <p class="day-theme">退房 × 机场返程</p>
-
-        <!-- 交通卡：KLIA Ekspres（非驾车） -->
-        <article class="transport-card transport-card--ekspres">
-          <div class="transport-head">
-            <span class="transport-mode">🚄 KLIA Ekspres</span>
-            <span class="transport-tag">机场交通</span>
-          </div>
-          <div class="transport-route">
-            <div class="route-end">
-              <span class="route-code">KL Sentral</span>
-              <span class="route-sub">中央车站</span>
-            </div>
-            <div class="route-mid">
-              <span class="route-icon">🚄</span>
-              <span class="route-dur">约 33 分钟</span>
-            </div>
-            <div class="route-end route-end--right">
-              <span class="route-code">KUL T1</span>
-              <span class="route-sub">吉隆坡机场第一航站楼</span>
-            </div>
-          </div>
-          <div class="transport-note">KL Sentral—KUL T1 搭乘 KLIA Ekspres（不驾车）。约 33 分钟，约 15–20 分钟一班，以现场为准。</div>
-        </article>
-
-        <article class="event-card">
-          <h3 class="event-title">🧳 Day 5｜退房 × 机场返程</h3>
-          <ul class="trip-list">
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d5-1">
-                <span class="todo-text"><span class="time">退房</span>🧳 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=MOV+Hotel+Bukit+Bintang" target="_blank" rel="noopener">MOV Hotel</a>｜办理退房</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d5-2">
-                <span class="todo-text"><span class="time">出发</span>🚆 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=KL+Sentral" target="_blank" rel="noopener">KL Sentral</a>｜前往中央车站（Grab / MRT）</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d5-3">
-                <span class="todo-text"><span class="time">快线</span>🚄 KLIA Ekspres → KUL T1｜机场快线</span>
-              </label>
-            </li>
-            <li class="todo">
-              <label class="todo-check">
-                <input type="checkbox" data-persist="d5-4">
-                <span class="todo-text"><span class="time">返程</span>🛫 <a class="spot-link" href="https://www.google.com/maps/search/?api=1&query=Kuala+Lumpur+International+Airport+Terminal+1" target="_blank" rel="noopener">吉隆坡国际机场 KUL T1</a>｜办理登机</span>
-              </label>
-            </li>
-          </ul>
-        </article>
-
-        <div class="photo-carousel js-photo-carousel" aria-label="Day 5 地点">
-          <div class="photo-carousel-track">
-            <div class="photo-carousel-slide cover cover--hotel"><div class="cover-emoji">🧳</div><div class="cover-label">退房</div></div>
-            <div class="photo-carousel-slide cover cover--sentral"><div class="cover-emoji">🚆</div><div class="cover-label">KL Sentral</div></div>
-            <div class="photo-carousel-slide cover cover--ekspres"><div class="cover-emoji">🚄</div><div class="cover-label">KLIA Ekspres</div></div>
-            <div class="photo-carousel-slide cover cover--klia"><div class="cover-emoji">🛫</div><div class="cover-label">吉隆坡国际机场</div></div>
-          </div>
-          <div class="photo-carousel-dots" aria-hidden="true"></div>
-        </div>
-      </section>
-
-    </div><!-- /行程 tab -->
+    <!-- ===================== 行程 Tab（内容由 app.js 从 data.js 渲染） ===================== -->
+    <div class="tab-content active" id="tabContentItinerary" role="tabpanel"></div>
 
     <!-- ===================== 地图 Tab ===================== -->
     <div class="tab-content" id="tabContentMap" role="tabpanel">
       <section class="map-panel">
         <div class="map-header">
           <h2 class="map-title">路线总览</h2>
-          <p class="map-hint">仅连接步行 / Grab 路段；KLIA Ekspres 与长途巴士以标记展示、不画驾车路线。</p>
+          <p class="map-hint">实线 = 建议 Grab 路段；虚线 = 步行路段。KLIA Ekspres、MRT/LRT 与长途巴士不画公路线，以标记与交通卡说明表示。</p>
         </div>
-        <div class="map-legend" id="mapLegend">
-          <span class="legend-item"><i class="legend-dot" style="background:#d4a373"></i>D1 抵达</span>
-          <span class="legend-item"><i class="legend-dot" style="background:#8fa3b0"></i>D2 市区</span>
-          <span class="legend-item"><i class="legend-dot" style="background:#b0725a"></i>D3 马六甲</span>
-          <span class="legend-item"><i class="legend-dot" style="background:#6f8f6a"></i>D4 黑风洞</span>
-          <span class="legend-item"><i class="legend-dot" style="background:#6a7ba0"></i>D5 返程</span>
+        <div class="map-filter" id="mapFilter" role="group" aria-label="按日期筛选">
+          <button class="filter-btn filter-btn--active" data-day="all">全部</button>
+          <button class="filter-btn" data-day="1">D1</button>
+          <button class="filter-btn" data-day="2">D2</button>
+          <button class="filter-btn" data-day="3">D3</button>
+          <button class="filter-btn" data-day="4">D4</button>
+          <button class="filter-btn" data-day="5">D5</button>
         </div>
         <div id="map" class="map"></div>
+        <p class="map-offline-hint" id="mapOfflineHint" hidden>地图瓦片暂时不可用（可能离线），行程文字不受影响。</p>
       </section>
     </div><!-- /地图 tab -->
 
@@ -528,6 +118,7 @@
   </nav>
 
   <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/data.js"></script>
   <script src="js/map.js"></script>
   <script src="js/app.js"></script>
 </body>

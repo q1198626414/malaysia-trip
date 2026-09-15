@@ -1,10 +1,11 @@
 /* ===== Malaysia Trip Service Worker ===== */
-const CACHE = 'malaysia-trip-v1';
+const CACHE = 'malaysia-trip-v2';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
   './js/app.js',
+  './js/data.js',
   './js/map.js',
   './vendor/leaflet/leaflet.js',
   './vendor/leaflet/leaflet.css',
