@@ -204,11 +204,13 @@
       '</article>';
 
     var s = day.summary;
+    var stars = '★'.repeat(day.intensity || 1) + '☆'.repeat(5 - (day.intensity || 1));
     var summaryHtml =
       '<div class="day-summary">' +
         '<span>📍 ' + s.spots + ' 个地点</span><span>🚶 ' + s.walks + '</span>' +
         '<span>🚗 ' + s.grabs + ' 次 Grab</span><span>💰 ' + s.budget + '</span>' +
         (s.endTime ? '<span>🌙 ' + s.endTime + '</span>' : '') +
+        '<span class="day-intensity">强度 ' + stars + '</span>' +
       '</div>';
 
     // 时间分段
