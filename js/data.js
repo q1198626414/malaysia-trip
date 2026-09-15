@@ -77,16 +77,16 @@ const TRIP = {
         { time: '18:15', type: 'shopping', emoji: '🛍️', zh: 'Pavilion 吉隆坡', en: 'Pavilion Kuala Lumpur',
           note: '轻松走走，熟悉环境', lat: 3.1486, lng: 101.7136,
           address: '168, Jalan Bukit Bintang, 55100 Kuala Lumpur',
-          duration: '约 1 小时', openingHours: '10:00 – 22:00', ticket: '无',
+          duration: '约 45 分钟', openingHours: '10:00 – 22:00', ticket: '无',
           tips: ['第一天只轻松走走','不安排购物任务'],
-          next: { mode: 'walk', text: '步行至阿罗街（约 10 分钟）' }
+          next: { mode: 'walk', text: '19:00 左右步行至阿罗街（约 10 分钟）' }
         },
-        { time: '19:20', type: 'food', emoji: '🍜', zh: '阿罗街', en: 'Jalan Alor Food Street',
+        { time: '19:00', type: 'food', emoji: '🍜', zh: '阿罗街', en: 'Jalan Alor Food Street',
           note: '夜市晚餐', lat: 3.1434, lng: 101.7080,
           address: 'Jalan Alor, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 1.5 小时', openingHours: '约 17:00 – 次日 01:00', ticket: '无',
           tips: ['推荐：福建面、沙爹、炒粿条、果汁','两人约 RM40–70','现金为主'],
-          next: { mode: 'walk', text: '榴莲/水果后步行回 MOV（约 8 分钟）' }
+          next: { mode: 'walk', text: '20:30 水果/榴莲 → 21:00 可选按摩 → 22:15 左右步行回 MOV（约 8 分钟）' }
         }
       ],
       restaurants: [
@@ -349,7 +349,7 @@ const TRIP = {
           note: '早餐 + 收行李 + 退房（行李放车上）', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 30 分钟', openingHours: '退房 12:00', ticket: '无',
-          tips: ['前一晚约 23:30 左右回酒店，今天晚起','行李放包车上'],
+          tips: ['08:15–08:30 起床；08:30–09:00 早餐；09:00–09:25 收拾行李；09:30 Check-out','行李放包车上'],
           next: { mode: 'grab', text: '包车前往 Zoo Negara（约 30 分钟）' }
         },
         { time: '10:00', type: 'attraction', emoji: '🦁', zh: 'Zoo Negara 国家动物园', en: 'Zoo Negara Malaysia',
@@ -425,8 +425,8 @@ const TRIP = {
         note: '酒店官方提供收费机场接送，需提前联系礼宾部预约。按 60–75 分钟保守规划（官方页面有 30 分钟和 1 小时两种说法，按保守算）。'
       },
       spots: [
-        { time: '08:00', type: 'hotel', emoji: '🏨', zh: 'Lexis Hibiscus', en: 'Lexis Hibiscus Port Dickson',
-          note: '酒店早餐 + 海边/泳池/Hibiscus Walk（不出酒店）', lat: 2.5167, lng: 101.8000,
+        { time: '07:30', type: 'hotel', emoji: '🏨', zh: 'Lexis Hibiscus', en: 'Lexis Hibiscus Port Dickson',
+          note: '07:30 起床；08:00–09:00 早餐；09:00–10:00 海边/泳池/Hibiscus Walk；10:00–10:30 洗澡；10:30–10:50 收行李；11:00 Check-out', lat: 2.5167, lng: 101.8000,
           address: '12th Mile, Jalan Pantai, 71250 Pasir Panjang, Negeri Sembilan',
           duration: '约 2 小时', openingHours: '退房 11:00', ticket: '无',
           tips: ['09:00–10:00 海边散步或泳池','10:00–10:30 洗澡','10:30–10:50 收行李','11:00 Check-out'],
