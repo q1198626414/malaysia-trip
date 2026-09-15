@@ -218,7 +218,7 @@ const TRIP = {
         from: { code: 'TBS', sub: '吉隆坡南湖镇车站' },
         mid: { icon: '🚌', dur: '约 2.5–3 小时' },
         to: { code: 'Melaka Sentral', sub: '马六甲中央车站' },
-        note: '吉隆坡—马六甲以长途巴士接驳。TBS 与 Melaka Sentral 为交通节点，不入正式行程。'
+        note: '吉隆坡—马六甲以长途巴士接驳。去程从 TBS 到 Melaka Sentral；回程从 Melaka Sentral 回 TBS，再用 Grab 回 MOV。两段巴士都建议提前网上买票。'
       },
       spots: [
         { time: '07:30', type: 'hotel', emoji: '🏨', zh: 'MOV Hotel', en: 'MOV Hotel Kuala Lumpur',
@@ -270,7 +270,7 @@ const TRIP = {
           address: 'Jalan Hang Jebat, 75200 Malacca',
           duration: '约 2 小时 10 分钟', openingHours: '周五至周日 约 18:00 – 00:00', ticket: '无',
           tips: ['推荐：Laksa、鸡饭粒、沙爹、小吃、Cendol','今晚是全程最晚一天'],
-          next: { mode: 'transit', text: 'Grab → Melaka Sentral → 长途巴士 → TBS → MOV（约 00:10）' }
+          next: { mode: 'transit', text: '20:10 左右离开鸡场街 → Grab 到 Melaka Sentral（约 15–20 分钟）→ 搭提前买好的晚班巴士到 TBS（约 2–2.5 小时）→ TBS 出站后 Grab 回 MOV（约 20–30 分钟，预计 23:50–00:30 到酒店）' }
         }
       ],
       restaurants: [
