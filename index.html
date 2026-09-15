@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="app-version" content="20260915-repair-01">
   <meta name="theme-color" content="#fdfaf6">
   <meta name="description" content="马来西亚五天四夜行程手册（2026.10.02 – 10.06）｜吉隆坡 × 马六甲">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +15,7 @@
   <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/style.css?v=20260915">
+  <link rel="stylesheet" href="css/style.css?v=20260915-repair-01">
 </head>
 <body>
 
@@ -32,7 +33,7 @@
   <!-- Hero -->
   <section class="hero" aria-label="行程概览">
     <div class="hero-bg" aria-hidden="true">
-      <img src="img/hero.webp" alt="" class="hero-bg-img" data-cdn="https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1200&q=80&auto=format&fit=crop" onerror="this.style.display='none'">
+      <img src="img/petronas-towers.webp" alt="" class="hero-bg-img" onerror="this.src='img/hero.webp';this.onerror=null">
     </div>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content">
@@ -54,8 +55,8 @@
     <div class="tab-content" id="tabContentMap" role="tabpanel">
       <section class="map-panel">
         <div class="map-header">
-          <h2 class="map-title">路线总览</h2>
-          <p class="map-hint">实线 = 建议 Grab 路段；虚线 = 步行路段。KLIA Ekspres、MRT/LRT 与长途巴士不画公路线，以标记与交通卡说明表示。</p>
+          <h2 class="map-title">马来西亚路线</h2>
+          <p class="map-hint">仅显示马来西亚行程。实线为 Grab，虚线为步行；公共交通请查看当天说明。</p>
         </div>
         <div class="map-filter" id="mapFilter" role="group" aria-label="按日期筛选">
           <button class="filter-btn filter-btn--active" data-day="all">全部</button>
@@ -66,13 +67,13 @@
           <button class="filter-btn" data-day="5">D5</button>
         </div>
         <div id="map" class="map"></div>
-        <div id="mapFallback" hidden>
+        <details id="mapFallback" class="map-route-list">
+          <summary>查看文字路线（无需地图服务）</summary>
           <div class="map-fallback-head">
-            <h3>🗺️ 地图暂时无法加载</h3>
-            <p>网络或地图服务暂时不可用，行程信息不受影响。</p>
+            <p id="mapFallbackStatus">地图不可用时，也可以按这里的顺序出行。</p>
           </div>
           <div id="mapFallbackRoutes"></div>
-        </div>
+        </details>
         <p class="map-offline-hint" id="mapOfflineHint" hidden>地图瓦片暂时不可用（可能离线），行程文字不受影响。</p>
       </section>
     </div><!-- /地图 tab -->
@@ -89,8 +90,8 @@
   </nav>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="js/data.js?v=20260915"></script>
-  <script src="js/map.js?v=20260915"></script>
-  <script src="js/app.js?v=20260915"></script>
+  <script src="js/data.js?v=20260915-repair-01"></script>
+  <script src="js/map.js?v=20260915-repair-01"></script>
+  <script src="js/app.js?v=20260915-repair-01"></script>
 </body>
 </html>

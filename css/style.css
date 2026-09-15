@@ -555,6 +555,9 @@ a { color: inherit; }
 
 /* ===== 地图降级 ===== */
 #mapFallback { padding: 16px; }
+.map-route-list { margin-top: 12px; border: 1px solid rgba(44,62,80,.12); border-radius: 12px; background: #fff; }
+.map-route-list summary { cursor: pointer; font-weight: 800; color: var(--primary); padding: 13px 16px; }
+.map-route-list[open] summary { border-bottom: 1px solid rgba(44,62,80,.08); }
 .map-fallback-head { margin-bottom: 16px; }
 .map-fallback-head h3 { font-size: 1.1rem; color: var(--primary); margin: 0 0 6px; }
 .map-fallback-head p { font-size: 0.82rem; color: var(--ink-soft); margin: 0; }
@@ -586,27 +589,6 @@ a { color: inherit; }
   position: absolute; inset: 0;
   background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.62));
 }
-
-/* ===== 顶部控制区 ===== */
-.top-controls {
-  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-  margin-bottom: 16px; padding: 10px 0;
-}
-.offline-indicator {
-  font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 999px;
-}
-.offline-indicator--online { background: #e8f5e9; color: #2e7d32; }
-.offline-indicator--offline { background: #ffebee; color: #c62828; }
-.view-toggle, .offline-btn, .share-btn {
-  font-size: 0.75rem; font-weight: 800; padding: 6px 14px; border-radius: 999px;
-  border: 1px solid rgba(44,62,80,0.18); background: #fff; color: var(--primary);
-  cursor: pointer; font-family: inherit;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.view-toggle { background: var(--primary); color: #fff; }
-.offline-btn { background: #f4f6f8; }
-.offline-btn.offline-ready { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
-.share-btn { background: var(--accent); color: #1a1a1a; border-color: rgba(0,0,0,0.12); }
 
 /* ===== 住宿卡片 ===== */
 .stays-section { margin-bottom: 20px; }
@@ -671,3 +653,12 @@ a { color: inherit; }
 
 /* ===== 隐藏元素 ===== */
 [hidden] { display: none !important; }
+
+/* Single compact view; photos have explicit sources and no generic fallback. */
+.place-photo { margin: 0 0 12px; position: relative; }
+.place-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.place-photo figcaption { position: absolute; bottom: 6px; right: 8px; font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,.55); }
+.place-photo figcaption a { color: #fff; }
+.spot-simple { margin-top: 4px; }
+.spot-img-wrap { max-height: 240px; }
+.hero-bg-img { width: 100%; height: 100%; object-fit: cover; }

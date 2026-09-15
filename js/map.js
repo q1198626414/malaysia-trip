@@ -87,7 +87,9 @@
     // 隐藏地图，显示降级 UI
     mapEl.style.display = 'none';
     var fallback = document.getElementById('mapFallback');
-    if (fallback) fallback.hidden = false;
+    if (fallback) fallback.open = true;
+    var status = document.getElementById('mapFallbackStatus');
+    if (status) status.textContent = '地图服务暂时不可用，以下文字路线仍可正常使用。';
     renderFallbackRoutes();
   }
 
@@ -99,8 +101,10 @@
     TRIP.days.forEach(function (day) {
       if (filter && day.id !== filter) return;
       html += '<div class="fallback-day"><h4>Day ' + day.id + '｜' + day.title + '</h4><ol>';
+      var visibleNum = 0;
       day.spots.forEach(function (s, i) {
-        var num = i + 1;
+        if (!TRIP.isMapLocation(s)) return;
+        var num = ++visibleNum;
         html += '<li><b>' + num + '.</b> ' + s.zh + ' ' + s.en + '</li>';
         if (s.next && s.next.mode !== 'none' && i < day.spots.length - 1) {
           html += '<li class="fallback-arrow">↓ ' + s.next.text + '</li>';
@@ -108,7 +112,7 @@
       });
       html += '</ol>';
       // 当天 Google Maps 多地点路线
-      var waypoints = day.spots.map(function (s) { return s.lat + ',' + s.lng; }).join('/');
+      var waypoints = day.spots.filter(TRIP.isMapLocation).map(function (s) { return s.lat + ',' + s.lng; }).join('/');
       html += '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日路线</a></div>';
     });
     container.innerHTML = html;
@@ -122,8 +126,11 @@
     TRIP.days.forEach(function (day) {
       var group = L.layerGroup();
       var spots = day.spots;
+      var visibleNum = 0;
 
       spots.forEach(function (s, i) {
+        if (!TRIP.isMapLocation(s)) return;
+        visibleNum++;
         var next = s.next || {};
         var nextLine = (next.mode && next.mode !== 'none' && i < spots.length - 1)
           ? '<div class="map-popup-next">' +
@@ -132,7 +139,7 @@
         var imgThumb = s.image
           ? '<img src="' + s.image + '" alt="' + (s.imageAlt || s.zh) + '" class="map-popup-img" loading="lazy" onerror="this.style.display=\'none\'">'
           : '';
-        var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, i + 1, s.type) })
+        var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, visibleNum, s.type) })
           .addTo(group)
           .bindPopup(
             '<div class="map-popup">' + imgThumb +
@@ -158,9 +165,11 @@
 
       // 只画步行 / Grab 路段
       spots.forEach(function (s, i) {
+        if (!TRIP.isMapLocation(s)) return;
         var next = s.next || {};
         if (!next.mode || next.mode === 'none' || next.mode === 'transit' || i >= spots.length - 1) return;
         var b = spots[i + 1];
+        if (!TRIP.isMapLocation(b) || (next.mode !== 'walk' && next.mode !== 'grab')) return;
         L.polyline([[s.lat, s.lng], [b.lat, b.lng]], {
           color: next.mode === 'walk' ? WALK : GRAB,
           weight: 3, opacity: 0.85,
@@ -172,7 +181,7 @@
       dayLayers[day.id] = group;
     });
 
-    (TRIP.transitNodes || []).forEach(function (n) {
+    (TRIP.transitNodes || []).filter(TRIP.isMapLocation).forEach(function (n) {
       nodeLayers[n.day] = nodeLayers[n.day] || L.layerGroup();
       L.marker([n.lat, n.lng], {
         icon: L.divIcon({ className: '', html: '<div class="map-marker map-marker--node">🚌</div>', iconSize: [22, 22], iconAnchor: [11, 11] })
@@ -198,11 +207,11 @@
     var pts = [];
     TRIP.days.forEach(function (day) {
       if (f !== 'all' && String(day.id) !== String(f)) return;
-      day.spots.forEach(function (s) { pts.push([s.lat, s.lng]); });
+      day.spots.filter(TRIP.isMapLocation).forEach(function (s) { pts.push([s.lat, s.lng]); });
     });
-    if (f !== 'all' && nodeLayers[f]) {
-      nodeLayers[f].eachLayer(function (l) { var ll = l.getLatLng(); pts.push([ll.lat, ll.lng]); });
-    }
+    Object.keys(nodeLayers).forEach(function (id) {
+      if (f === 'all' || String(id) === String(f)) nodeLayers[id].eachLayer(function (l) { var ll = l.getLatLng(); pts.push([ll.lat, ll.lng]); });
+    });
     if (pts.length === 1) map.setView(pts[0], 14);
     else if (pts.length > 1) map.fitBounds(L.latLngBounds(pts).pad(0.18));
 
@@ -231,6 +240,8 @@
   // 暴露给 app.js：点击 Timeline 地点时飞至地图 Marker
   window.flyToSpot = function (dayId, spotIndex) {
     if (!map) return;
+    applyFilter(String(dayId));
+    document.querySelectorAll('#mapFilter .filter-btn').forEach(function (btn) { btn.classList.toggle('filter-btn--active', btn.getAttribute('data-day') === String(dayId)); });
     var key = dayId + '-' + spotIndex;
     var m = markersBySpot[key];
     if (m) {

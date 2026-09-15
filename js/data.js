@@ -9,10 +9,8 @@ const TRIP = {
     durationNights: 4,
     originCity: '杭州',
     destinationCity: 'Kuala Lumpur',
-    heroImage: 'img/hero.webp',
-    heroImageCdn: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1200&q=80&auto=format&fit=crop',
-    heroImageAlt: 'Petronas Twin Towers at night, Kuala Lumpur',
-    heroImageCredit: 'Unsplash'
+    heroImageAlt: 'Petronas Twin Towers, Kuala Lumpur',
+    heroImageCredit: 'Petronas Twin Towers official website'
   },
   stays: [
     {
@@ -20,10 +18,9 @@ const TRIP = {
       dates: 'Oct 2 – 5', nights: 3, status: 'confirmed',
       address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
       lat: 3.1462, lng: 101.7097,
+      image: 'img/mov-hotel.webp', imageAlt: 'MOV Hotel room',
+      imageCredit: 'MOV Hotel official website', imageSource: 'https://movhotel.com/gallery/',
       checkIn: '15:00', checkOut: '12:00',
-      image: 'img/hotel.webp',
-      imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-      imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
       nearestMRT: 'Bukit Bintang MRT / Monorail Station',
       googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=MOV+Hotel+Kuala+Lumpur'
     },
@@ -32,10 +29,9 @@ const TRIP = {
       dates: 'Oct 5 – 6', nights: 1, status: 'confirmed',
       address: '12th Mile, Jalan Pantai, 71250 Pasir Panjang, Negeri Sembilan',
       lat: 2.5167, lng: 101.8000,
+      image: 'img/lexis-hibiscus.webp', imageAlt: 'Lexis Hibiscus Port Dickson aerial view',
+      imageCredit: 'Lexis Hibiscus official website', imageSource: 'https://www.lexishibiscuspd.com/gallery/photo-gallery',
       checkIn: '15:00', checkOut: '11:00',
-      image: 'img/d4-4.webp',
-      imageCdn: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80&auto=format&fit=crop',
-      imageAlt: 'Lexis Hibiscus water villas at Port Dickson', imageCredit: 'Unsplash',
       nearestMRT: '—',
       airportTransfer: '酒店提供收费机场接送，需提前联系礼宾部预约',
       googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Lexis+Hibiscus+Port+Dickson'
@@ -59,10 +55,8 @@ const TRIP = {
       },
       spots: [
         { time: '08:55', type: 'transit', emoji: '🛫', zh: '杭州萧山机场 HGH', en: 'Hangzhou Xiaoshan Airport',
-          note: '起飞', lat: 30.2294, lng: 120.4343,
+          mapVisible: false, note: '起飞', lat: 30.2294, lng: 120.4343,
           address: '杭州萧山国际机场', duration: '—', openingHours: '—', ticket: '已购票',
-          image: 'img/d1-1.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
-          imageAlt: 'Airport departure', imageCredit: 'Wikimedia Commons',
           tips: ['提前值机','国际航班建议提前 2 小时到达'],
           next: { mode: 'transit', text: '飞行至吉隆坡（约 5.5 小时）' }
         },
@@ -70,8 +64,6 @@ const TRIP = {
           note: '抵达，入境 + 取行李 + ATM/换马币', lat: 2.7456, lng: 101.7099,
           address: '64000 Sepang, Selangor',
           duration: '约 1–1.5 小时', openingHours: '24 小时', ticket: '无',
-          image: 'img/d1-1.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
-          imageAlt: 'KLIA Main Terminal Building', imageCredit: 'Wikimedia Commons',
           tips: ['提前填好马来西亚入境卡（MDAC）','不要按"14:20落地14:30出机场"理想状态排'],
           next: { mode: 'transit', text: 'KLIA Ekspres 至 KL Sentral（约 28 分钟），再换 Grab 至酒店' }
         },
@@ -79,8 +71,6 @@ const TRIP = {
           note: 'Check-in / 洗澡 / 充电 / 休息', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 1.25 小时', openingHours: '入住 15:00 / 退房 12:00', ticket: '无',
-          image: 'img/hotel.webp', imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Boutique hotel room interior', imageCredit: 'Unsplash',
           tips: ['第一天轻松适应','酒店位于 Bukit Bintang 核心区'],
           next: { mode: 'walk', text: '步行至 Pavilion（约 5 分钟）' }
         },
@@ -88,8 +78,6 @@ const TRIP = {
           note: '轻松走走，熟悉环境', lat: 3.1486, lng: 101.7136,
           address: '168, Jalan Bukit Bintang, 55100 Kuala Lumpur',
           duration: '约 1 小时', openingHours: '10:00 – 22:00', ticket: '无',
-          image: 'img/d1-4.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Pavilion_KL_%282022%29.jpg/640px-Pavilion_KL_%282022%29.jpg',
-          imageAlt: 'Pavilion Kuala Lumpur exterior', imageCredit: 'Wikimedia Commons',
           tips: ['第一天只轻松走走','不安排购物任务'],
           next: { mode: 'walk', text: '步行至阿罗街（约 10 分钟）' }
         },
@@ -97,8 +85,6 @@ const TRIP = {
           note: '夜市晚餐', lat: 3.1434, lng: 101.7080,
           address: 'Jalan Alor, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 1.5 小时', openingHours: '约 17:00 – 次日 01:00', ticket: '无',
-          image: 'img/d1-5.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Jalan_Alor_%282022%29.jpg/640px-Jalan_Alor_%282022%29.jpg',
-          imageAlt: 'Jalan Alor street food stalls at night', imageCredit: 'Wikimedia Commons',
           tips: ['推荐：福建面、沙爹、炒粿条、果汁','两人约 RM40–70','现金为主'],
           next: { mode: 'walk', text: '榴莲/水果后步行回 MOV（约 8 分钟）' }
         }
@@ -131,8 +117,6 @@ const TRIP = {
           note: '早餐：咖椰吐司 + 半熟蛋 + 白咖啡', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 30 分钟', openingHours: '—', ticket: '无',
-          image: 'img/hotel.webp', imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Kaya toast breakfast', imageCredit: 'Unsplash',
           tips: [],
           next: { mode: 'transit', text: 'MRT 至 Muzium Negara' }
         },
@@ -140,8 +124,6 @@ const TRIP = {
           note: '确定保留的博物馆', lat: 3.1383, lng: 101.6865,
           address: 'Jalan Damansara, Perdana Botanical Gardens, 50566 Kuala Lumpur',
           duration: '约 2 小时', openingHours: '09:00 – 18:00', ticket: 'RM 5',
-          image: 'img/d2-2.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/National_Museum_%28Muzium_Negara%29_2023.jpg/640px-National_Museum_%28Muzium_Negara%29_2023.jpg',
-          imageAlt: 'National Museum building', imageCredit: 'Wikimedia Commons',
           tips: ['重点：马来半岛早期历史、马六甲苏丹国、殖民史、华人印度人迁移、独立','优先中文自助导览','为明天马六甲做准备'],
           next: { mode: 'transit', text: 'MRT 至 Pasar Seni（约 10 分钟）' }
         },
@@ -149,8 +131,6 @@ const TRIP = {
           note: 'Pasar Seni 附近', lat: 3.1450, lng: 101.6960,
           address: 'Pasar Seni 附近',
           duration: '约 50 分钟', openingHours: '—', ticket: '约 RM 25–40 / 两人',
-          image: 'img/d2-3.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Petaling_Street_%282022%29.jpg/640px-Petaling_Street_%282022%29.jpg',
-          imageAlt: 'Hainanese chicken rice', imageCredit: 'Wikimedia Commons',
           tips: ['午餐后前往茨厂街'],
           next: { mode: 'walk', text: '步行至茨厂街' }
         },
@@ -158,8 +138,6 @@ const TRIP = {
           note: '唐人街街区', lat: 3.1440, lng: 101.6970,
           address: 'Jalan Petaling, City Centre, 50000 Kuala Lumpur',
           duration: '约 35 分钟', openingHours: '约 08:00 – 22:00', ticket: '无',
-          image: 'img/d2-3.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Petaling_Street_%282022%29.jpg/640px-Petaling_Street_%282022%29.jpg',
-          imageAlt: 'Petaling Street arch gate', imageCredit: 'Wikimedia Commons',
           tips: ['著名牌坊和遮阳棚'],
           next: { mode: 'walk', text: '步行（约 3 分钟）' }
         },
@@ -167,8 +145,6 @@ const TRIP = {
           note: '壁画与老街空间', lat: 3.1446, lng: 101.6982,
           address: 'Lorong Panggung, City Centre, 50000 Kuala Lumpur',
           duration: '约 30 分钟', openingHours: '全天', ticket: '无',
-          image: 'img/d2-4.webp', imageCdn: 'https://images.unsplash.com/photo-1580910533731-f52e3f382324?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Colorful street art', imageCredit: 'Unsplash',
           tips: ['多幅创意壁画适合拍照'],
           next: { mode: 'walk', text: '步行至中央艺术坊（约 5 分钟）' }
         },
@@ -176,8 +152,6 @@ const TRIP = {
           note: '天热/下雨时的室内缓冲', lat: 3.1468, lng: 101.6957,
           address: 'Jalan Hang Kasturi, City Centre, 50050 Kuala Lumpur',
           duration: '约 45 分钟', openingHours: '10:00 – 21:30', ticket: '无',
-          image: 'img/d2-5.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Central_Market_KL_%282022%29.jpg/640px-Central_Market_KL_%282022%29.jpg',
-          imageAlt: 'Central Market KL art deco building', imageCredit: 'Wikimedia Commons',
           tips: ['二楼 Precious Old China 是知名娘惹餐厅','适合买手信'],
           next: { mode: 'walk', text: '步行至独立广场（约 8 分钟）' }
         },
@@ -185,8 +159,6 @@ const TRIP = {
           note: '独立历史地标', lat: 3.1478, lng: 101.6932,
           address: 'Jalan Raja, City Centre, 50050 Kuala Lumpur',
           duration: '约 40 分钟', openingHours: '全天', ticket: '无',
-          image: 'img/d2-6.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Merdeka_Square_%282022%29.jpg/640px-Merdeka_Square_%282022%29.jpg',
-          imageAlt: 'Merdeka Square with flagpole', imageCredit: 'Wikimedia Commons',
           tips: ['世界最高旗杆（95 米）','对面是苏丹阿都沙末大厦'],
           next: { mode: 'grab', text: 'Grab 返回 MOV 休息（约 15 分钟）' }
         },
@@ -194,17 +166,15 @@ const TRIP = {
           note: '酒店休息 / 洗澡 / 换衣 / 空调 / 补水（必须保留）', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 70 分钟', openingHours: '—', ticket: '无',
-          image: 'img/hotel.webp', imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Hotel room for afternoon rest', imageCredit: 'Unsplash',
           tips: ['避开正午高温','休整后再出发'],
           next: { mode: 'transit', text: 'MRT 至 KLCC（约 15 分钟）' }
         },
         { time: '18:00', type: 'attraction', emoji: '🌉', zh: '双子塔 KLCC', en: 'Petronas Twin Towers',
+          image: 'img/petronas-towers.webp', imageAlt: 'Petronas Twin Towers skyline',
+          imageCredit: 'Petronas Twin Towers official website', imageSource: 'https://www.petronastwintowers.com.my/',
           note: '观景台 + 夜景', lat: 3.1580, lng: 101.7116,
           address: 'Kuala Lumpur City Centre, 50088 Kuala Lumpur',
           duration: '约 1 小时', openingHours: '商场 10:00 – 22:00 / 空中走廊周二至日 09:00 – 17:00（周一关闭）', ticket: '空中走廊需预约购票',
-          image: 'img/d2-7.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Petronas_Twin_Towers.jpg/640px-Petronas_Twin_Towers.jpg',
-          imageAlt: 'Petronas Twin Towers', imageCredit: 'Wikimedia Commons',
           tips: ['建议提前订票','19:00–19:40 KLCC Park 拍外景','20:45–21:30 看夜景'],
           next: { mode: 'walk', text: '步行至 KLCC Park' }
         }
@@ -255,8 +225,6 @@ const TRIP = {
           note: '早餐：椰浆饭，行李寄存前台', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '—', openingHours: '—', ticket: '无',
-          image: 'img/hotel.webp', imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Hotel room', imageCredit: 'Unsplash',
           tips: ['行李寄存前台','轻装前往马六甲'],
           next: { mode: 'transit', text: 'Grab 至 TBS → 长途巴士（约 2.5–3 小时）→ Melaka Sentral → Grab 进古城' }
         },
@@ -264,8 +232,6 @@ const TRIP = {
           note: '荷兰广场历史核心', lat: 2.1940, lng: 102.2490,
           address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
           duration: '约 40 分钟', openingHours: '约 09:00 – 17:30', ticket: '广场免费， Stadthuys 博物馆约 RM 10',
-          image: 'img/d3-2.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Stadthuys_Melaka.jpg/640px-Stadthuys_Melaka.jpg',
-          imageAlt: 'Red Stadthuys building', imageCredit: 'Wikimedia Commons',
           tips: ['标志性红色建筑','广场中央有维多利亚女王喷泉'],
           next: { mode: 'walk', text: '步行（约 3 分钟）' }
         },
@@ -273,8 +239,6 @@ const TRIP = {
           note: '可选/推荐（太累可删）', lat: 2.1956, lng: 102.2462,
           address: '48-50, Jalan Tun Tan Cheng Lock, 75200 Malacca',
           duration: '约 55 分钟', openingHours: '10:00 – 16:15（周一关闭）', ticket: '约 RM 18',
-          image: 'img/d3-3.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Baba_Nyonya_Heritage_Museum.jpg/640px-Baba_Nyonya_Heritage_Museum.jpg',
-          imageAlt: 'Baba Nyonya Heritage Museum', imageCredit: 'Wikimedia Commons',
           tips: ['需跟随导览','内部禁止拍照','前一晚睡不好可现场删（已有国家博物馆）'],
           next: { mode: 'walk', text: '步行至圣保罗山（约 8 分钟）' }
         },
@@ -282,8 +246,6 @@ const TRIP = {
           note: '俯瞰古城', lat: 2.1935, lng: 102.2495,
           address: 'Jalan Kota, Bandar Hilir, 75000 Malacca',
           duration: '约 50 分钟', openingHours: '全天', ticket: '无',
-          image: 'img/d3-4.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/St._Paul%27s_Church_Melaka.jpg/640px-St._Paul%27s_Church_Melaka.jpg',
-          imageAlt: 'St. Paul Church ruins', imageCredit: 'Wikimedia Commons',
           tips: ['山顶可俯瞰马六甲全城','下山顺路看 A Famosa 遗门'],
           next: { mode: 'walk', text: '步行至 Cendol 甜品店' }
         },
@@ -291,17 +253,15 @@ const TRIP = {
           note: '马来西亚最古老华人寺庙', lat: 2.1955, lng: 102.2464,
           address: '25, Jalan Tokong, 75200 Malacca',
           duration: '约 25 分钟', openingHours: '约 07:00 – 19:00', ticket: '无',
-          image: 'img/d3-5.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Cheng_Hoon_Teng_Temple.jpg/640px-Cheng_Hoon_Teng_Temple.jpg',
-          imageAlt: 'Cheng Hoon Teng Temple', imageCredit: 'Wikimedia Commons',
           tips: ['建筑精美，可静静参观'],
           next: { mode: 'walk', text: '步行至游船码头（约 5 分钟）' }
         },
         { time: '16:25', type: 'attraction', emoji: '🛶', zh: '马六甲河游船', en: 'Melaka River Cruise',
+          image: 'img/melaka-river.webp', imageAlt: 'Melaka River Cruise at night',
+          imageCredit: 'Melaka River Cruise official website', imageSource: 'https://melakarivercruise.my/',
           note: '傍晚场次光线较好', lat: 2.1944, lng: 102.2468,
           address: 'Jalan Persisiran Bunga Raya, 75100 Malacca',
           duration: '约 50 分钟', openingHours: '约 09:00 – 22:30', ticket: '约 RM 30（成人）',
-          image: 'img/d3-6.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Melaka_River_Cruise.jpg/640px-Melaka_River_Cruise.jpg',
-          imageAlt: 'Melaka River with colorful buildings', imageCredit: 'Wikimedia Commons',
           tips: ['沿河可看到彩色壁画建筑'],
           next: { mode: 'walk', text: '咖啡/休息（17:15–17:55）' }
         },
@@ -309,8 +269,6 @@ const TRIP = {
           note: '周末夜市（今晚是周日，晚餐直接解决）', lat: 2.1967, lng: 102.2460,
           address: 'Jalan Hang Jebat, 75200 Malacca',
           duration: '约 2 小时 10 分钟', openingHours: '周五至周日 约 18:00 – 00:00', ticket: '无',
-          image: 'img/d3-7.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Jonker_Street_Night_Market.jpg/640px-Jonker_Street_Night_Market.jpg',
-          imageAlt: 'Jonker Street crowded night market', imageCredit: 'Wikimedia Commons',
           tips: ['推荐：Laksa、鸡饭粒、沙爹、小吃、Cendol','今晚是全程最晚一天'],
           next: { mode: 'transit', text: 'Grab → Melaka Sentral → 长途巴士 → TBS → MOV（约 00:10）' }
         }
@@ -370,8 +328,6 @@ const TRIP = {
           note: '早餐 + 收行李 + 退房（行李放车上）', lat: 3.1462, lng: 101.7097,
           address: 'Jalan Berangan, Bukit Bintang, 50200 Kuala Lumpur',
           duration: '约 30 分钟', openingHours: '退房 12:00', ticket: '无',
-          image: 'img/hotel.webp', imageCdn: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Hotel room check out', imageCredit: 'Unsplash',
           tips: ['前一晚约 00:10 才回酒店，今天 08:00 起床','行李放包车上'],
           next: { mode: 'grab', text: '包车前往 Batu Caves（约 25–35 分钟）' }
         },
@@ -379,17 +335,15 @@ const TRIP = {
           note: '彩虹阶梯 + 印度教圣地（压缩至 70 分钟）', lat: 3.2374, lng: 101.6839,
           address: 'Gombak, 68100 Batu Caves, Selangor',
           duration: '约 70 分钟', openingHours: '约 06:00 – 21:00', ticket: '无',
-          image: 'img/d4-2.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Batu_Caves_Murugan.jpg/640px-Batu_Caves_Murugan.jpg',
-          imageAlt: 'Batu Caves colorful staircase and Murugan statue', imageCredit: 'Wikimedia Commons',
           tips: ['272 级彩虹阶梯','猴子会抢食物','穿长裤/长裙','洞内需脱鞋','下雨台阶滑'],
           next: { mode: 'grab', text: '包车前往 Zoo Negara（约 30 分钟）' }
         },
         { time: '11:10', type: 'attraction', emoji: '🦁', zh: 'Zoo Negara 国家动物园', en: 'Zoo Negara Malaysia',
+          image: 'img/zoo-negara.webp', imageAlt: 'Malayan tiger at Zoo Negara',
+          imageCredit: 'Zoo Negara official website', imageSource: 'https://www.zoonegara.my/',
           note: '重点看马来西亚本土动物', lat: 3.2106, lng: 101.7578,
           address: 'Jalan Ulu Kelang, Kemensah Heights, 68000 Ampang, Selangor',
           duration: '约 2 小时 50 分钟', openingHours: '09:00 – 17:00（16:00 最后入场）', ticket: '约 RM 45（成人）+ Tram 约 RM 14.90',
-          image: 'img/d4-3.webp', imageCdn: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Malayan tiger at Zoo Negara', imageCredit: 'Unsplash',
           tips: ['必看：马来虎、马来熊、马来貘、白手长臂猿','建议坐 Tram（RM14.90/人），不要全程纯走','动物园内简单午餐（13:15–13:45）','不要平均分配时间，本土动物优先'],
           next: { mode: 'grab', text: '包车前往 Lexis Hibiscus Port Dickson（约 2–2.5 小时）' }
         },
@@ -397,8 +351,6 @@ const TRIP = {
           note: 'Check-in / 放东西 / 洗脸 / 换衣 / 休息', lat: 2.5167, lng: 101.8000,
           address: '12th Mile, Jalan Pantai, 71250 Pasir Panjang, Negeri Sembilan',
           duration: '约 30 分钟', openingHours: '入住 15:00 / 退房 11:00', ticket: '无',
-          image: 'img/d4-4.webp', imageCdn: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Lexis Hibiscus water villas', imageCredit: 'Unsplash',
           tips: ['不要一到就冲出去','16:30–17:00 房间休息'],
           next: { mode: 'walk', text: '步行至海边/水上别墅区' }
         },
@@ -406,8 +358,6 @@ const TRIP = {
           note: '水上别墅区散步 / 海景 / 泳池 / 日落', lat: 2.5167, lng: 101.8000,
           address: 'Lexis Hibiscus Resort 内',
           duration: '约 2 小时', openingHours: '全天', ticket: '无',
-          image: 'img/d4-5.webp', imageCdn: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Beach sunset at Lexis Hibiscus', imageCredit: 'Unsplash',
           tips: ['水上别墅区散步','Hibiscus Walk','看日落（17:30–19:10）','拍照'],
           next: { mode: 'walk', text: '步行至酒店餐厅' }
         },
@@ -415,8 +365,6 @@ const TRIP = {
           note: 'Wave Dining / Satellite Restaurant & Bar', lat: 2.5167, lng: 101.8000,
           address: 'Lexis Hibiscus Resort 内',
           duration: '约 1 小时 20 分钟', openingHours: '约 18:00 – 22:00', ticket: '约 RM 60–120 / 人',
-          image: 'img/d4-5.webp', imageCdn: 'https://images.unsplash.com/photo-1559742811-822873691df8?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Resort dinner', imageCredit: 'Unsplash',
           tips: ['第一晚好好享受酒店','如特别想吃本地海鲜可 Grab 出去'],
           next: { mode: 'walk', text: '海边夜间放松后回房' }
         }
@@ -467,8 +415,6 @@ const TRIP = {
           note: '酒店早餐 + 海边/泳池/Hibiscus Walk（不出酒店）', lat: 2.5167, lng: 101.8000,
           address: '12th Mile, Jalan Pantai, 71250 Pasir Panjang, Negeri Sembilan',
           duration: '约 2 小时', openingHours: '退房 11:00', ticket: '无',
-          image: 'img/d4-4.webp', imageCdn: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80&auto=format&fit=crop',
-          imageAlt: 'Beach hotel morning', imageCredit: 'Unsplash',
           tips: ['09:00–10:00 海边散步或泳池','10:00–10:30 洗澡','10:30–10:50 收行李','11:00 Check-out'],
           next: { mode: 'transit', text: '酒店机场接送至 KUL T1（约 60–75 分钟）' }
         },
@@ -476,8 +422,6 @@ const TRIP = {
           note: '酒店机场接送（提前礼宾部预约）', lat: 2.7456, lng: 101.7099,
           address: '64000 Sepang, Selangor',
           duration: '约 60–75 分钟', openingHours: '—', ticket: '酒店收费接送',
-          image: 'img/d5-2.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
-          imageAlt: 'Road to airport', imageCredit: 'Wikimedia Commons',
           tips: ['11:00 出发，12:00–12:15 到达','距离 15:20 起飞还有约 3 小时'],
           next: { mode: 'transit', text: '值机 / 安检 / 出境' }
         },
@@ -485,8 +429,6 @@ const TRIP = {
           note: '托运 / 安检 / 午餐 / 伴手礼 / 登机', lat: 2.7456, lng: 101.7099,
           address: '64000 Sepang, Selangor',
           duration: '约 3 小时', openingHours: '24 小时', ticket: '无',
-          image: 'img/d5-3.webp', imageCdn: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/KLIA_Main_Terminal_Building_2023.jpg/640px-KLIA_Main_Terminal_Building_2023.jpg',
-          imageAlt: 'KLIA departure hall', imageCredit: 'Wikimedia Commons',
           tips: ['15:20 起飞，20:30 抵达杭州','机场内解决午餐和伴手礼'],
           next: { mode: 'none', text: '' }
         }
@@ -517,4 +459,10 @@ const TRIP = {
     { name: 'TBS 南湖镇车站', lat: 3.0750, lng: 101.7110, day: 3, type: 'transit' },
     { name: 'Melaka Sentral 马六甲中央车站', lat: 2.2207, lng: 102.2507, day: 3, type: 'transit' }
   ]
+};
+
+// Map views and route links share one scope; flight text stays in the itinerary.
+TRIP.isMapLocation = function (place) {
+  return place.mapVisible !== false && Number.isFinite(place.lat) && Number.isFinite(place.lng) &&
+    place.lat >= 1 && place.lat <= 7.5 && place.lng >= 99 && place.lng <= 120;
 };
