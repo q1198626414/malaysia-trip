@@ -18,6 +18,13 @@
   function mapsDirTo(lat, lng) {
     return 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
   }
+  function priorityClass(priority) {
+    return String(priority || 'MUST').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
+  }
+  function priorityBadge(spot) {
+    var value = spot.priority || 'MUST';
+    return '<span class="priority-badge priority-badge--' + priorityClass(value) + '">' + esc(value) + '</span>' + (spot.weatherSensitive ? '<span class="weather-badge">Weather-sensitive</span>' : '');
+  }
 
   /* ---------- 状态 ---------- */
   var collapsed = {};
@@ -98,6 +105,7 @@
     var detailHtml =
       '<div class="spot-detail" id="spot-detail-' + day.id + '-' + i + '" hidden>' +
         '<div class="spot-full-info">' +
+          '<div class="spot-detail-priority">' + priorityBadge(spot) + '</div>' +
           (spot.en ? '<div><b>' + esc(spot.en) + '</b></div>' : '') +
           '<div>' + esc(spot.note) + '</div>' +
           (spot.address ? '<div>📍 ' + esc(spot.address) + '</div>' : '') +
@@ -110,12 +118,12 @@
       '</div>';
 
     return (
-      '<li class="todo spot-item" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
+      '<li class="todo spot-item spot-item--' + priorityClass(spot.priority) + (spot.optional ? ' spot-item--optional' : '') + '" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
         '<label class="todo-check">' +
           '<input type="checkbox" data-persist="d' + day.id + '-' + (i + 1) + '">' +
           '<span class="todo-text">' +
             '<span class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji +
-            ' <b class="spot-name">' + esc(spot.zh) + '</b></span>' +
+            ' <b class="spot-name">' + esc(spot.zh) + '</b> ' + priorityBadge(spot) + '</span>' +
           '</span>' +
         '</label>' +
         simpleHtml + detailHtml +
@@ -198,7 +206,14 @@
     });
 
     var waypoints = day.spots.filter(TRIP.isMapLocation).map(function (s) { return s.lat + ',' + s.lng; }).join('/');
-    var dayRouteBtn = '<a class="mini-btn day-route-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日完整路线</a>';
+    var dayRouteBtn = day.id === 3
+      ? '<div class="day-route-note">D3 公共交通按文字分段执行，不生成整天驾车路线。</div>'
+      : '<a class="mini-btn day-route-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日完整路线</a>';
+
+    var planBHtml = day.planB ? '<aside class="plan-b"><strong>Plan B</strong><span>' + esc(day.planB) + '</span></aside>' : '';
+    var returnPlansHtml = day.returnPlans ? '<aside class="return-plans"><h3>回程方案</h3>' + day.returnPlans.map(function (plan) {
+      return '<div class="return-plan"><strong>' + esc(plan.title) + '</strong><span>' + esc(plan.text) + '</span></div>';
+    }).join('') + '</aside>' : '';
 
     var isCollapsed = collapsed['day-' + day.id] || false;
     var collapseIcon = isCollapsed ? '▸' : '▾';
@@ -218,7 +233,7 @@
           '<button class="reset-day-btn" data-day="' + day.id + '" type="button">重置当天进度</button></p>' +
         summaryHtml +
         '<div class="day-content" id="day-content-' + day.id + '"' + (isCollapsed ? ' hidden' : '') + '>' +
-          transportHtml + dayRouteBtn +
+          transportHtml + dayRouteBtn + planBHtml + returnPlansHtml +
           '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +
           renderRestaurants(day) +
         '</div>' +
@@ -226,9 +241,18 @@
     );
   }
 
+  function renderBookingCenter() {
+    if (!TRIP.bookings || !TRIP.bookings.length) return '';
+    var html = '<article class="booking-center event-card"><div class="booking-head"><h2>预订 / 准备</h2><span>出发前集中确认</span></div><div class="booking-grid">';
+    TRIP.bookings.forEach(function (item) {
+      html += '<div class="booking-item"><div class="booking-item-head"><strong>' + esc(item.name) + '</strong><span class="booking-status booking-status--' + priorityClass(item.status) + '">' + esc(item.status) + '</span></div><p>' + esc(item.note) + '</p></div>';
+    });
+    return html + '</div></article>';
+  }
+
   /* ---------- 渲染页面 ---------- */
   var itineraryContainer = document.getElementById('tabContentItinerary');
-  itineraryContainer.innerHTML = renderStays() + TRIP.days.map(renderDay).join('');
+  itineraryContainer.innerHTML = renderStays() + renderBookingCenter() + TRIP.days.map(renderDay).join('');
 
   /* ---------- 标签切换 ---------- */
   var tabItineraryBtn = document.getElementById('tabItinerary');

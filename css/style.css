@@ -289,6 +289,19 @@ a { color: inherit; }
 .todo-text { min-width: 0; flex: 1; }
 .spot-line { display: block; overflow-wrap: break-word; }
 .spot-name { font-weight: 700; color: var(--primary); }
+.priority-badge, .weather-badge {
+  display: inline-block; margin-left: 5px; padding: 2px 6px; border-radius: 999px;
+  font-size: 0.62rem; font-weight: 800; letter-spacing: .2px; vertical-align: 2px;
+  text-decoration: none; white-space: nowrap;
+}
+.priority-badge--must { background: #e5f4ea; color: #237747; }
+.priority-badge--optional { background: #fff0d8; color: #9a661e; }
+.priority-badge--pass-by-quick-stop { background: #edf0f4; color: #657181; }
+.priority-badge--rest { background: #e8eef8; color: #3b5e8c; }
+.priority-badge--transport { background: #e7e9ec; color: #58616c; }
+.weather-badge { background: #e8f3f1; color: #28736d; }
+.spot-item--optional { border-left: 3px solid #e7b968; }
+.spot-item--optional .spot-name { font-weight: 650; }
 .todo.done .todo-text, .todo.done .next-row, .todo.done .next-note { opacity: 0.48; }
 .todo.done .spot-line { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: rgba(0,0,0,0.35); }
 
@@ -552,6 +565,35 @@ a { color: inherit; }
 
 /* ===== 当天路线按钮 ===== */
 .day-route-btn { display: block; width: 100%; text-align: center; margin-bottom: 14px; }
+.day-route-note, .fallback-route-note {
+  padding: 10px 12px; margin-bottom: 14px; border-radius: 10px;
+  background: #f3f5f7; color: var(--ink-soft); font-size: 0.78rem; line-height: 1.5;
+}
+
+/* ===== 预订与 Plan B ===== */
+.booking-center { margin-bottom: 24px; }
+.booking-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.booking-head h2 { margin: 0; font-size: 1.08rem; color: var(--primary); }
+.booking-head span { font-size: .72rem; color: var(--ink-soft); }
+.booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.booking-item { padding: 10px; border-radius: 10px; background: #f7f8fa; border: 1px solid #edf0f3; }
+.booking-item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+.booking-item strong { color: var(--primary); font-size: .82rem; line-height: 1.35; }
+.booking-item p { margin: 6px 0 0; color: var(--ink-soft); font-size: .72rem; line-height: 1.45; }
+.booking-status { flex: 0 0 auto; padding: 3px 6px; border-radius: 999px; font-size: .58rem; font-weight: 800; white-space: nowrap; }
+.booking-status--booked { background: #e5f4ea; color: #237747; }
+.booking-status--to-book { background: #fff0d8; color: #9a661e; }
+.booking-status--not-required { background: #edf0f4; color: #657181; }
+.plan-b { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; margin-bottom: 14px; border-radius: 10px; background: #fffaf0; border: 1px solid #f1dfb5; color: #725628; font-size: .78rem; line-height: 1.5; }
+.plan-b strong { flex: 0 0 auto; color: #9a661e; }
+.return-plans { margin-bottom: 14px; padding: 12px; border-radius: 10px; background: #f4f7f5; border: 1px solid #dce9df; }
+.return-plans h3 { margin: 0 0 8px; color: var(--primary); font-size: .88rem; }
+.return-plan { display: grid; grid-template-columns: 128px 1fr; gap: 8px; padding: 7px 0; border-top: 1px solid rgba(44,62,80,.1); font-size: .76rem; line-height: 1.5; }
+.return-plan:first-of-type { border-top: 0; }
+.return-plan strong { color: #34714b; }
+.return-plan span { color: var(--ink-soft); }
+.optional-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: .78rem; color: var(--primary); cursor: pointer; }
+.optional-toggle input { width: 17px; height: 17px; accent-color: var(--accent); }
 
 /* ===== 地图降级 ===== */
 #mapFallback { padding: 16px; }
@@ -578,6 +620,7 @@ a { color: inherit; }
 .map-marker--food { font-size: 0.68rem; }
 .map-marker--hotel { font-size: 0.68rem; }
 .map-marker--transit { font-size: 0.68rem; background: #5c636a; }
+.map-marker--food, .map-marker--hotel, .map-marker--transit { font-size: 0.72rem; }
 
 /* ===== Hero 真实图片支持 ===== */
 .hero-bg-img {
@@ -597,6 +640,12 @@ a { color: inherit; }
   background: var(--card); border-radius: var(--radius); overflow: hidden;
   margin-bottom: 14px; border: 1px solid var(--card-border);
   box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 460px) {
+  .booking-grid { grid-template-columns: 1fr; }
+  .return-plan { grid-template-columns: 1fr; gap: 2px; }
+  .priority-badge, .weather-badge { font-size: 0.58rem; padding-left: 5px; padding-right: 5px; }
 }
 .stay-img-wrap { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: linear-gradient(150deg,#2c3e50,#34495e); }
 .stay-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }

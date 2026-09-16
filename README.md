@@ -9,11 +9,11 @@
 
 - **顶部标签**：行程 / 地图，切换不刷新，localStorage 记忆上次标签
 - **Hero**：KL 天际线 SVG + 深色渐变，`2026.10.02 – 2026.10.06` / `Malaysia Trip` / `马来西亚五天四夜`
-- **5 天行程**：大号低饱和日期数字 + 主题句；时间线卡片含 Emoji、地点 Google Maps 链接
+- **5 天行程**：大号低饱和日期数字 + 主题句；时间线卡片含 MUST / OPTIONAL / PASS-BY / REST / TRANSPORT 优先级、预计耗时与地点导航
 - **Checkbox**：每项可勾选，localStorage 持久化；已完成降透明度 + 删除线
 - **交通卡（深蓝黑 `#1e272e`）**：KLIA Ekspres / 长途巴士 / MRT / Grab；不编造班次，只给"约"级耗时；Ekspres 与巴士不画驾车路线
 - **精选实景图**：两家酒店、双子塔、国家动物园、马六甲河游船使用已核实来源的本地 WebP；不再为每个步骤重复塞通用图或依赖境外图片 CDN
-- **地图（Leaflet）**：22 地点标记 + 仅步行（虚线绿）/ Grab（实线琥珀）路线；KL Sentral–KUL、KL–Melaka 只用交通卡说明
+- **地图（Leaflet）**：按 D1–D5 筛选、编号与可选景点开关；仅步行（虚线绿）/ Grab（实线琥珀）路线，公共交通只显示分段说明；D3 不生成整天驾车路线
 - **底部导航**：D1–D5 黑色胶囊，当前日暖金高亮，Safe Area 适配，平滑滚动
 - **PWA**：manifest + service worker（预缓存 + OSM 瓦片缓存），离线可完整打开
 
@@ -23,6 +23,9 @@
 - 移除「在线 / 详细 / 下载离线行程 / 分享」顶部控制区，保留每个地点自己的详情展开。
 - 地图、地图标记和每日完整路线只包含马来西亚坐标；杭州机场仍保留在航班行程文字中。
 - 所有核心 HTML、CSS、JavaScript、Leaflet 和精选照片均为同源本地资源；地图瓦片不可用时可展开文字路线。Google Maps 仅用于用户主动点击导航。
+- D2 已改为 Batu Caves → National Museum → Chinatown → MOV 休息 → Aquaria KLCC → KLCC Park → Petronas 外观；双子塔只看 Ground View，不登塔、不需要票。
+- D3 公共交通与 Grab 分段显示，并提供 Normal Route / Late-night fallback；D4 只保留 Zoo Negara → Lexis Hibiscus。
+- 新增紧凑的「预订 / 准备」区域、Plan B 提示和地图「显示可选景点」开关。
 - 中国大陆网络兼容范围：前端不依赖 Google、Wikimedia、Unsplash 才能打开；但 GitHub Pages 域名本身在不同地区和运营商下可能不稳定，若要保证可达需另配中国大陆可用的静态托管或自有域名。
 
 ## 结构
@@ -57,13 +60,13 @@ python -m http.server 8420
 - 远端：<https://github.com/q1198626414/malaysia-trip>（gh 账户 q1198626414）
 - Pages：main 分支根目录，构建即生效
 
-## 修订（2026-09-15 二轮：最终行程对齐）
+## 修订（2026-09-16：最终旅行方案内容重构）
 
-- 行程数据单一来源 `js/data.js`：主清单 / 地点概览 / 地图标记同源渲染
-- Day1=5 站（补武吉免登）；Day2=7 站（补 MOV/国家博物馆/鬼仔巷，删苏丹阿都沙末大厦与 KLCC Park 主清单项）；Day3=7 站（补峇峇娘惹祖屋/青云亭，河游船/夜市更名，A Famosa 降为路过注记）；Day4 舒服版无天后宫；Day5=MOV→KL Sentral→KUL T1
+- 行程数据单一来源 `js/data.js`：主清单 / 地点概览 / 地图标记 / 预订中心同源渲染
+- Day1=抵达 + Bukit Bintang + Jalan Alor；Day2=黑风洞 + 国家博物馆 + Chinatown + Aquaria + KLCC Park + Petronas 外观；Day3=公共交通前往马六甲、老城步行、回程正常路线/深夜备用；Day4=Zoo Negara→Lexis Hibiscus；Day5=酒店→机场
 - 每站新增 📍Google Maps（经纬度）与「前往下一站」（步行=walking，Grab=起终点导航+建议文案，公共交通=纯文字说明）
 - 每日进度 `n / N` + 确认式重置；地图加 D1–D5 筛选 + 自动缩放 + 编号标记 + 交通节点；SW 缓存 v2
-- 验证全绿：三宽度+桌面无横向滚动、Hero 198px、链接 45 条（27 地点全经纬度 / 13 步行 / 5 Grab）、D3 筛选 9 标记、离线 27 项可读、console 0 错误；截图 `outputs/revise-20260915/`
+- 验证全绿：JS 语法、12 项静态断言、行程结构与图片引用检查；地图 D3 不生成整天驾车路线，所有核心内容仍支持离线文字回退。
 
 ## 验证记录（2026-09-15）
 

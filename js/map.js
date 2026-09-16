@@ -36,14 +36,15 @@
   var dayLayers = {};
   var nodeLayers = {};
   var currentFilter = 'all';
+  var showOptional = true;
   var markersBySpot = {}; // "dayId-index" -> L.marker
   var currentTileLayer = null;
   var tileFailCount = 0;
 
   function markerIcon(day, n, type) {
     var bg = DAY_COLORS[day] || '#888';
-    var content = type === 'food' ? '🍜' : type === 'hotel' ? '🏨' : type === 'transit' ? '🚉' : String(n);
-    var size = type === 'food' || type === 'hotel' || type === 'transit' ? 22 : 26;
+    var content = String(n).padStart(2, '0');
+    var size = 26;
     return L.divIcon({
       className: '',
       html: '<div class="map-marker' + (type === 'food' ? ' map-marker--food' : type === 'hotel' ? ' map-marker--hotel' : type === 'transit' ? ' map-marker--transit' : '') + '" style="background:' + bg + '">' + content + '</div>',
@@ -103,7 +104,7 @@
       html += '<div class="fallback-day"><h4>Day ' + day.id + '｜' + day.title + '</h4><ol>';
       var visibleNum = 0;
       day.spots.forEach(function (s, i) {
-        if (!TRIP.isMapLocation(s)) return;
+        if (!TRIP.isMapLocation(s) || (!showOptional && s.optional)) return;
         var num = ++visibleNum;
         html += '<li><b>' + num + '.</b> ' + s.zh + ' ' + s.en + '</li>';
         if (s.next && s.next.mode !== 'none' && i < day.spots.length - 1) {
@@ -111,9 +112,11 @@
         }
       });
       html += '</ol>';
-      // 当天 Google Maps 多地点路线
-      var waypoints = day.spots.filter(TRIP.isMapLocation).map(function (s) { return s.lat + ',' + s.lng; }).join('/');
-      html += '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日路线</a></div>';
+      if (day.id === 3) html += '<p class="fallback-route-note">D3 按公共交通分段执行，不生成整天驾车路线。</p></div>';
+      else {
+        var waypoints = day.spots.filter(function (s) { return TRIP.isMapLocation(s) && (showOptional || !s.optional); }).map(function (s) { return s.lat + ',' + s.lng; }).join('/');
+        html += '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日路线</a></div>';
+      }
     });
     container.innerHTML = html;
   }
@@ -129,7 +132,7 @@
       var visibleNum = 0;
 
       spots.forEach(function (s, i) {
-        if (!TRIP.isMapLocation(s)) return;
+        if (!TRIP.isMapLocation(s) || (!showOptional && s.optional)) return;
         visibleNum++;
         var next = s.next || {};
         var nextLine = (next.mode && next.mode !== 'none' && i < spots.length - 1)
@@ -139,12 +142,12 @@
         var imgThumb = s.image
           ? '<img src="' + s.image + '" alt="' + (s.imageAlt || s.zh) + '" class="map-popup-img" loading="lazy" onerror="this.style.display=\'none\'">'
           : '';
-        var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, visibleNum, s.type) })
+        var m = L.marker([s.lat, s.lng], { icon: markerIcon(day.id, i + 1, s.type) })
           .addTo(group)
           .bindPopup(
             '<div class="map-popup">' + imgThumb +
               '<b>' + s.zh + '</b><br>' + s.en +
-              '<div class="map-popup-meta">D' + day.id + ' · 第 ' + (i + 1) + ' 站 · ' + (s.duration || '') + '</div>' +
+              '<div class="map-popup-meta">D' + day.id + ' · 第 ' + String(i + 1).padStart(2, '0') + ' 站 · ' + (s.priority || 'MUST') + ' · ' + (s.duration || '') + '</div>' +
               nextLine +
               '<div class="map-popup-btns">' +
                 '<a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng + '">📍 地点</a>' +
@@ -165,11 +168,11 @@
 
       // 只画步行 / Grab 路段
       spots.forEach(function (s, i) {
-        if (!TRIP.isMapLocation(s)) return;
+        if (!TRIP.isMapLocation(s) || (!showOptional && s.optional)) return;
         var next = s.next || {};
         if (!next.mode || next.mode === 'none' || next.mode === 'transit' || i >= spots.length - 1) return;
         var b = spots[i + 1];
-        if (!TRIP.isMapLocation(b) || (next.mode !== 'walk' && next.mode !== 'grab')) return;
+        if (!TRIP.isMapLocation(b) || (!showOptional && b.optional) || (next.mode !== 'walk' && next.mode !== 'grab')) return;
         L.polyline([[s.lat, s.lng], [b.lat, b.lng]], {
           color: next.mode === 'walk' ? WALK : GRAB,
           weight: 3, opacity: 0.85,
@@ -207,7 +210,7 @@
     var pts = [];
     TRIP.days.forEach(function (day) {
       if (f !== 'all' && String(day.id) !== String(f)) return;
-      day.spots.filter(TRIP.isMapLocation).forEach(function (s) { pts.push([s.lat, s.lng]); });
+      day.spots.filter(function (s) { return TRIP.isMapLocation(s) && (showOptional || !s.optional); }).forEach(function (s) { pts.push([s.lat, s.lng]); });
     });
     Object.keys(nodeLayers).forEach(function (id) {
       if (f === 'all' || String(id) === String(f)) nodeLayers[id].eachLayer(function (l) { var ll = l.getLatLng(); pts.push([ll.lat, ll.lng]); });
@@ -227,13 +230,33 @@
 
   function buildFilterUI() {
     var wrap = document.getElementById('mapFilter');
-    if (!wrap) return;
+    if (!wrap || wrap._bound) return;
+    wrap._bound = true;
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('.filter-btn');
       if (!btn) return;
       wrap.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('filter-btn--active'); });
       btn.classList.add('filter-btn--active');
       applyFilter(btn.getAttribute('data-day'));
+    });
+  }
+
+  function buildOptionalToggle() {
+    var toggle = document.getElementById('mapOptionalToggle');
+    if (!toggle || toggle._bound) return;
+    toggle._bound = true;
+    toggle.addEventListener('change', function () {
+      showOptional = toggle.checked;
+      if (map) {
+        Object.keys(dayLayers).forEach(function (id) { if (map.hasLayer(dayLayers[id])) map.removeLayer(dayLayers[id]); });
+        dayLayers = {}; nodeLayers = {}; markersBySpot = {};
+        mapReady = false;
+        map.remove();
+        map = null;
+        document.getElementById('map').style.display = '';
+        window.ensureMap();
+      }
+      renderFallbackRoutes();
     });
   }
 
@@ -256,6 +279,7 @@
       mapReady = true;
       buildMap();
       buildFilterUI();
+      buildOptionalToggle();
       return;
     }
     if (map) setTimeout(function () { map.invalidateSize(); }, 60);
