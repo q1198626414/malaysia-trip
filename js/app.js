@@ -71,62 +71,20 @@
   function renderSpot(day, spot, i, idx) {
     var next = spot.next || { mode: 'none', text: '' };
     var hasNext = next.mode && next.mode !== 'none' && i < day.spots.length - 1;
-    var nextHtml = '';
-    if (hasNext) {
-      if (next.mode === 'transit') {
-        nextHtml = '<div class="next-note">🚉 ' + esc(next.text) + '</div>';
-      } else {
-        var b = day.spots[i + 1];
-        nextHtml = '<div class="next-row"><span class="next-text">' + (next.mode === 'grab' ? '🚗 ' : '🚶 ') + esc(next.text) + '</span><a class="mini-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=' + spot.lat + ',' + spot.lng + '&destination=' + b.lat + ',' + b.lng + (next.mode === 'walk' ? '&travelmode=walking' : '') + '">查看路线</a></div>';
-      }
-    }
-
-    var imgHtml = photo(spot, 'spot-img-wrap');
-
-    // 简洁模式：只显示时间、名称、图片、停留、下一段、导航
+    var nextHtml = hasNext ? '<div class="spot-next">' + (next.mode === 'grab' ? '🚗 ' : next.mode === 'walk' ? '🚶 ' : '🚉 ') + esc(next.text) + '</div>' : '';
     var simpleHtml =
       '<div class="spot-simple">' +
-        '<div class="spot-time">' + esc(spot.time || '') + '</div>' +
-        imgHtml +
-        '<div class="spot-quick-info">' +
-          (spot.duration ? '<span>⏱️ ' + esc(spot.duration) + '</span>' : '') +
-          (hasNext && next.mode === 'grab' ? '<span>🚗 Grab</span>' : '') +
-          (hasNext && next.mode === 'walk' ? '<span>🚶 步行</span>' : '') +
-          (hasNext && next.mode === 'transit' ? '<span>🚉 公共交通</span>' : '') +
-        '</div>' +
+        '<div class="spot-time-line"><span class="spot-time">' + esc(spot.time || '') + '</span>' + (spot.duration ? '<span class="spot-duration">' + esc(spot.duration) + '</span>' : '') + '</div>' +
         '<div class="spot-actions">' +
-          '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(spot.lat, spot.lng) + '">🧭 导航</a>' +
-          (TRIP.isMapLocation(spot) ? '<button type="button" class="mini-btn mini-btn--map" data-day="' + day.id + '" data-index="' + i + '">🗺️ 地图</button>' : '') +
-          '<button type="button" class="spot-toggle" data-target="spot-detail-' + day.id + '-' + i + '" aria-expanded="false">详情 ›</button>' +
-        '</div>' +
-      '</div>';
-
-    // 详细模式：展开全部
-    var detailHtml =
-      '<div class="spot-detail" id="spot-detail-' + day.id + '-' + i + '" hidden>' +
-        '<div class="spot-full-info">' +
-          '<div class="spot-detail-priority">' + priorityBadge(spot) + '</div>' +
-          (spot.en ? '<div><b>' + esc(spot.en) + '</b></div>' : '') +
-          '<div>' + esc(spot.note) + '</div>' +
-          (spot.address ? '<div>📍 ' + esc(spot.address) + '</div>' : '') +
-          (spot.openingHours ? '<div>🕐 ' + esc(spot.openingHours) + '</div>' : '') +
-          (spot.ticket ? '<div>🎫 ' + esc(spot.ticket) + '</div>' : '') +
-          (spot.duration ? '<div>⏱️ ' + esc(spot.duration) + '</div>' : '') +
-          (spot.tips && spot.tips.length ? '<div class="spot-tips">💡 ' + spot.tips.map(function(t){ return esc(t); }).join(' · ') + '</div>' : '') +
-        '</div>' +
+          (spot.en ? '<button type="button" class="spot-copy-name" data-copy="' + esc(spot.en) + '" title="点击复制英文名">' + esc(spot.en) + '</button>' : '') +
+          '<a class="spot-nav-btn" target="_blank" rel="noopener" href="' + mapsDirTo(spot.lat, spot.lng) + '">🧭 导航</a>' +
         '</div>' +
       '</div>';
 
     return (
-      '<li class="todo spot-item spot-item--' + priorityClass(spot.priority) + (spot.optional ? ' spot-item--optional' : '') + '" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
-        '<label class="todo-check">' +
-          '<input type="checkbox" data-persist="d' + day.id + '-' + (i + 1) + '">' +
-          '<span class="todo-text">' +
-            '<span class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji +
-            ' <b class="spot-name">' + esc(spot.zh) + '</b> ' + priorityBadge(spot) + '</span>' +
-          '</span>' +
-        '</label>' +
-        simpleHtml + detailHtml +
+      '<li class="spot-item" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
+        '<div class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji + ' <b class="spot-name">' + esc(spot.zh) + '</b></div>' +
+        simpleHtml +
         nextHtml +
       '</li>'
     );
@@ -215,14 +173,12 @@
           '<div class="day-info">' +
             '<span class="day-date">' + day.weekday + ' · ' + day.date + '</span>' +
             '<span class="day-title">｜' + esc(day.title) + '</span>' +
-            '<span class="day-progress" id="progress-d' + day.id + '"></span>' +
           '</div>' +
           '<button class="day-collapse-btn" data-day="' + day.id + '" aria-expanded="' + !isCollapsed + '">' + collapseIcon + '</button>' +
         '</div>' +
-        '<p class="day-theme">' + esc(day.theme) +
-          '<button class="reset-day-btn" data-day="' + day.id + '" type="button">重置当天进度</button></p>' +
+        '<p class="day-theme">' + esc(day.theme) + '</p>' +
         '<div class="day-content" id="day-content-' + day.id + '"' + (isCollapsed ? ' hidden' : '') + '>' +
-          transportHtml + dayRouteBtn + planBHtml + returnPlansHtml +
+          planBHtml + returnPlansHtml +
           '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +
           renderRestaurants(day) +
         '</div>' +
@@ -323,6 +279,18 @@
       target.hidden = !isHidden;
       btn.textContent = isHidden ? '收起 ›' : '详情 ›';
       btn.setAttribute('aria-expanded', String(isHidden));
+    });
+  });
+
+  document.querySelectorAll('.spot-copy-name').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var name = btn.getAttribute('data-copy') || '';
+      var done = function () { var old = btn.textContent; btn.textContent = '已复制'; setTimeout(function () { btn.textContent = old; }, 1200); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(name).then(done).catch(function () {});
+      else {
+        var input = document.createElement('textarea'); input.value = name; document.body.appendChild(input); input.select();
+        try { document.execCommand('copy'); done(); } catch (e) {} input.remove();
+      }
     });
   });
 
