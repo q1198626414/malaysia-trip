@@ -181,16 +181,6 @@
         '<div class="transport-note">' + esc(t.note) + '</div>' +
       '</article>';
 
-    var s = day.summary;
-    var stars = '★'.repeat(day.intensity || 1) + '☆'.repeat(5 - (day.intensity || 1));
-    var summaryHtml =
-      '<div class="day-summary">' +
-        '<span>📍 ' + s.spots + ' 个地点</span><span>🚶 ' + s.walks + '</span>' +
-        '<span>🚗 ' + s.grabs + ' 次 Grab</span><span>💰 ' + s.budget + '</span>' +
-        (s.endTime ? '<span>🌙 ' + s.endTime + '</span>' : '') +
-        '<span class="day-intensity">强度 ' + stars + '</span>' +
-      '</div>';
-
     // 时间分段
     var listHtml = '';
     var lastSeg = '';
@@ -231,7 +221,6 @@
         '</div>' +
         '<p class="day-theme">' + esc(day.theme) +
           '<button class="reset-day-btn" data-day="' + day.id + '" type="button">重置当天进度</button></p>' +
-        summaryHtml +
         '<div class="day-content" id="day-content-' + day.id + '"' + (isCollapsed ? ' hidden' : '') + '>' +
           transportHtml + dayRouteBtn + planBHtml + returnPlansHtml +
           '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +

@@ -499,17 +499,6 @@ a { color: inherit; }
 }
 .hotel-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* ===== 当天摘要 ===== */
-.day-summary {
-  display: flex; flex-wrap: wrap; gap: 8px 12px;
-  margin-bottom: 14px; font-size: 0.78rem;
-}
-.day-summary span {
-  background: rgba(212,163,115,0.12); color: #7a5c3a;
-  padding: 5px 12px; border-radius: 999px;
-  font-weight: 700; letter-spacing: 0.3px;
-}
-
 /* ===== 时间分段 ===== */
 .time-seg {
   list-style: none; padding: 10px 0 4px; margin: 0;
