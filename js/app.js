@@ -44,7 +44,7 @@
 
   /* ---------- 渲染住宿 ---------- */
   function renderStays() {
-    var html = '<div class="stays-section"><h2 class="stays-title">🏨 住宿</h2>';
+    var html = '<section class="stays-section"><button type="button" class="stays-toggle" aria-expanded="false"><span>🏨 住宿</span><span class="stays-toggle-meta">' + TRIP.stays.length + ' 家 · 点击查看</span><span class="stays-toggle-icon">▸</span></button><div class="stays-body" hidden>';
     TRIP.stays.forEach(function (s) {
       var statusBadge = s.status === 'tentative' ? '<span class="stay-status stay-status--tentative">待确认</span>' : '<span class="stay-status stay-status--confirmed">已确认</span>';
       var candidatesHtml = s.candidates ? '<div class="stay-candidates">候选：' + s.candidates.map(function(c){ return esc(c); }).join(' / ') + '</div>' : '';
@@ -64,7 +64,7 @@
           '</div>' +
         '</article>';
     });
-    return html + '</div>';
+    return html + '</div></section>';
   }
 
   /* ---------- 渲染地点卡片 ---------- */
@@ -198,6 +198,15 @@
   /* ---------- 渲染页面 ---------- */
   var itineraryContainer = document.getElementById('tabContentItinerary');
   itineraryContainer.innerHTML = renderStays() + renderBookingCenter() + TRIP.days.map(renderDay).join('');
+
+  var staysToggle = document.querySelector('.stays-toggle');
+  if (staysToggle) staysToggle.addEventListener('click', function () {
+    var body = document.querySelector('.stays-body');
+    var expanded = staysToggle.getAttribute('aria-expanded') === 'true';
+    staysToggle.setAttribute('aria-expanded', String(!expanded));
+    body.hidden = expanded;
+    staysToggle.querySelector('.stays-toggle-icon').textContent = expanded ? '▸' : '▾';
+  });
 
   /* ---------- 标签切换 ---------- */
   var tabItineraryBtn = document.getElementById('tabItinerary');

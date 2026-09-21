@@ -624,7 +624,15 @@ a { color: inherit; }
 
 /* ===== 住宿卡片 ===== */
 .stays-section { margin-bottom: 20px; }
-.stays-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0 0 12px; }
+.stays-toggle {
+  display: flex; align-items: center; width: 100%; gap: 10px; padding: 12px 14px;
+  border: 1px solid var(--card-border); border-radius: 12px; background: var(--card);
+  color: var(--primary); font: inherit; font-weight: 800; text-align: left; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+.stays-toggle-meta { margin-left: auto; color: var(--ink-soft); font-size: .78rem; font-weight: 600; }
+.stays-toggle-icon { font-size: 1.1rem; color: var(--accent); }
+.stays-body { margin-top: 10px; }
 .stay-card {
   background: var(--card); border-radius: var(--radius); overflow: hidden;
   margin-bottom: 14px; border: 1px solid var(--card-border);
