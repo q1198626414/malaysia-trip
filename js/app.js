@@ -3,11 +3,23 @@
   'use strict';
   var BOOKING_KEY = 'mt_booking_status';
   var DAY_KEY = 'mt_day';
-  var statuses = {'TO BOOK':'待办', 'BOOKED':'已办', 'NOT REQUIRED':'无需办理'};
+  var legacyStatuses = {'TO BOOK':'TODO', 'BOOKED':'DONE', 'NOT REQUIRED':'TODO'};
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function read(key, fallback) { try {return JSON.parse(localStorage.getItem(key)) || fallback;} catch (_) {return fallback;} }
   var bookingState = read(BOOKING_KEY, {});
   if (typeof bookingState !== 'object' || Array.isArray(bookingState)) bookingState = {};
+  function normalizeBookingStatus(value, fallback) {
+    value = legacyStatuses[value] || value;
+    if (value === 'DONE' || value === 'BOOKED') return 'DONE';
+    if (value === 'TODO' || value === 'TO BOOK') return 'TODO';
+    return fallback === 'DONE' ? 'DONE' : 'TODO';
+  }
+  function bookingStatus(item) {
+    var values = [bookingState[item.id], bookingState[item.name]];
+    (item.legacyNames || []).forEach(function(name) { values.push(bookingState[name]); });
+    for (var i = 0; i < values.length; i++) if (values[i]) return normalizeBookingStatus(values[i], item.status);
+    return normalizeBookingStatus(item.status, 'TODO');
+  }
   function navigation(s) {
     return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(s.navigationName || (s.lat + ',' + s.lng));
   }
@@ -19,10 +31,15 @@
     }).join(''), 'stays-section');
   }
   function renderBookings() {
-    return disclosure('📋 预订 / 准备', '<p class="muted">状态保存在当前浏览器，不跨设备同步。</p>'+TRIP.bookings.map(function(b,i) {
-      var value = statuses[bookingState[b.name]] ? bookingState[b.name] : b.status;
-      return '<div class="booking-item"><label for="booking-'+i+'">'+esc(b.name)+'</label><select id="booking-'+i+'" data-booking="'+i+'" aria-label="'+esc(b.name)+'办理状态">'+Object.keys(statuses).map(function(k){return '<option value="'+k+'"'+(k===value?' selected':'')+'>'+statuses[k]+'</option>';}).join('')+'</select><p>'+esc(b.note)+'</p></div>';
-    }).join('')+'<p id="booking-feedback" role="status" aria-live="polite"></p>', 'booking-center');
+    var bookings = TRIP.bookings.slice().sort(function(a,b){return (a.priority || 99) - (b.priority || 99);});
+    var done = bookings.filter(function(b){return bookingStatus(b) === 'DONE';}).length;
+    var body = '<p class="muted booking-intro">按优先级排列 · 已完成 <span data-booking-count>'+done+' / '+bookings.length+'</span> · 状态保存在当前浏览器，不跨设备同步。</p>';
+    body += bookings.map(function(b) {
+      var value = bookingStatus(b);
+      var priorityClass = ' booking-item--p'+(b.priority || 3);
+      return '<article class="booking-item'+priorityClass+'"><div class="booking-item-head"><div class="booking-title"><strong>'+esc(b.name)+'</strong><span class="priority-badge priority-badge--p'+(b.priority || 3)+'">'+esc(b.priorityLabel || '')+'</span></div><button type="button" class="booking-status-dot'+(value==='DONE'?' is-complete':'')+'" data-booking-id="'+esc(b.id || b.name)+'" aria-label="'+esc(b.name)+(value==='DONE'?'已完成，点击标记为未完成':'未完成，点击标记为已完成')+'" aria-pressed="'+String(value==='DONE')+'" title="点击切换完成状态"></button></div><p>'+esc(b.note)+'</p></article>';
+    }).join('');
+    return disclosure('📋 预订 / 准备', body+'<p id="booking-feedback" role="status" aria-live="polite"></p>', 'booking-center');
   }
   function renderSpot(s, i, day) {
     var n = s.next || {};
@@ -67,13 +84,24 @@
     } catch (_) {btn.textContent='复制失败，请重试';}
     setTimeout(function(){btn.textContent=label;},1400);
   });});
-  document.querySelectorAll('[data-booking]').forEach(function(select){select.addEventListener('change',function(){
-    var item=TRIP.bookings[Number(select.dataset.booking)];
-    var old=bookingState[item.name] || item.status;
-    var updated=Object.assign({},bookingState);updated[item.name]=select.value;
+  document.querySelectorAll('.booking-status-dot').forEach(function(button){button.addEventListener('click',function(){
+    var item=TRIP.bookings.find(function(b){return (b.id || b.name) === button.dataset.bookingId;});
+    if (!item) return;
+    var next=bookingStatus(item)==='DONE'?'TODO':'DONE';
+    var updated=Object.assign({},bookingState);
     var feedback=document.getElementById('booking-feedback');
-    try {localStorage.setItem(BOOKING_KEY,JSON.stringify(updated));bookingState=updated;feedback.textContent='已保存';}
-    catch (_) {select.value=old;feedback.textContent='无法保存，请允许浏览器本地存储后重试。';}
+    try {
+      updated[item.id || item.name]=next;
+      localStorage.setItem(BOOKING_KEY,JSON.stringify(updated));
+      bookingState=updated;
+      var complete=next==='DONE';
+      button.classList.toggle('is-complete',complete);
+      button.setAttribute('aria-pressed',String(complete));
+      button.setAttribute('aria-label',item.name+(complete?'已完成，点击标记为未完成':'未完成，点击标记为已完成'));
+      var count=document.querySelector('[data-booking-count]');
+      if (count) count.textContent=TRIP.bookings.filter(function(b){return bookingStatus(b)==='DONE';}).length+' / '+TRIP.bookings.length;
+      feedback.textContent='已保存';
+    } catch (_) {feedback.textContent='无法保存，请允许浏览器本地存储后重试。';}
   });});
   /* ---------- Service Worker：更新后仅刷新一次，首次安装不刷新 ---------- */
   if ('serviceWorker' in navigator) {

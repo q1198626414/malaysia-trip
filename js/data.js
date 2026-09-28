@@ -73,44 +73,87 @@ const TRIP = {
   },
   "bookings": [
     {
-      "name": "Lexis Hibiscus",
-      "status": "BOOKED",
-      "note": "10/5–10/6，已预订"
-    },
-    {
-      "name": "Petronas Towers 外观",
-      "status": "NOT REQUIRED",
-      "note": "Ground View / Exterior，免费，不登塔"
-    },
-    {
-      "name": "Melaka Bus",
+      "id": "museum-mandarin-tour",
+      "priority": 1,
+      "priorityLabel": "高优先级",
+      "name": "国家博物馆普通话导览",
       "status": "TO BOOK",
-      "note": "D3建议去程09:00、返程20:00左右；以实际购票为准"
+      "note": "D2 10/3；普通门票现场购票，普通话人工导览需提前申请"
     },
     {
+      "id": "aquaria",
+      "priority": 1,
+      "priorityLabel": "高优先级",
       "name": "Aquaria KLCC",
       "status": "TO BOOK",
-      "note": "10/3 下午，票价与入场规则出发前确认"
+      "note": "D2 17:00 左右入场；建议提前买票并确认时段"
     },
     {
-      "name": "Zoo Negara",
+      "id": "melaka-bus",
+      "priority": 1,
+      "priorityLabel": "高优先级",
+      "name": "马六甲往返巴士",
+      "legacyNames": ["Melaka Bus"],
       "status": "TO BOOK",
-      "note": "10/5 上午，票价与开放安排出发前确认"
+      "note": "D3 建议去程 09:00、返程 20:00 左右；建议班次，待订票确认"
     },
     {
-      "name": "Putra Mosque",
-      "status": "NOT REQUIRED",
-      "note": "D4计划14:15–15:00；内部开放以现场安排为准"
-    },
-    {
-      "name": "D4 Private Transfer",
+      "id": "d4-transfer",
+      "priority": 1,
+      "priorityLabel": "高优先级",
+      "name": "D4 多点包车",
+      "legacyNames": ["D4 Private Transfer"],
       "status": "TO BOOK",
       "note": "MOV → Zoo Negara → Putra Mosque → Lexis Hibiscus"
     },
     {
-      "name": "D5 Airport Transfer",
+      "id": "baba-nyonya",
+      "priority": 2,
+      "priorityLabel": "建议提前",
+      "name": "峇峇娘惹祖屋博物馆",
       "status": "TO BOOK",
-      "note": "Lexis Hibiscus → KUL T1，提前预约"
+      "note": "D3 周日；建议提前买票，避免现场排队"
+    },
+    {
+      "id": "melaka-cruise",
+      "priority": 2,
+      "priorityLabel": "建议提前",
+      "name": "马六甲河游船",
+      "status": "TO BOOK",
+      "note": "D3 16:00 备选项目；周日建议提前购票，下雨可取消"
+    },
+    {
+      "id": "zoo-negara",
+      "priority": 2,
+      "priorityLabel": "建议提前",
+      "name": "Zoo Negara",
+      "status": "TO BOOK",
+      "note": "D4 10:00 左右入场；提前确认开放安排并买票"
+    },
+    {
+      "id": "d5-transfer",
+      "priority": 2,
+      "priorityLabel": "建议提前",
+      "name": "D5 机场接送",
+      "legacyNames": ["D5 Airport Transfer"],
+      "status": "TO BOOK",
+      "note": "Lexis Hibiscus → KUL T1；建议提前让酒店预约，约 11:00 出发"
+    },
+    {
+      "id": "lexis-sunset-cruise",
+      "priority": 3,
+      "priorityLabel": "到店办理",
+      "name": "Lexis Sunset Cruise",
+      "status": "TO BOOK",
+      "note": "D4 入住后如要参加，约 16:00 到店询问并预约"
+    },
+    {
+      "id": "lexis-hibiscus",
+      "priority": 4,
+      "priorityLabel": "已预订",
+      "name": "Lexis Hibiscus",
+      "status": "BOOKED",
+      "note": "10/5–10/6，已预订"
     }
   ],
   "days": [

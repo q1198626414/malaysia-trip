@@ -1,5 +1,5 @@
 /* Malaysia Trip: versioned shell + network revalidation + offline fallback. */
-const VERSION = '20260928-simple-01';
+const VERSION = '20260928-booking-03';
 const CACHE = 'malaysia-trip-' + VERSION;
 const APP_SHELL = [
   './', './index.html',
