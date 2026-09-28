@@ -1,366 +1,80 @@
-/* ===== Malaysia Trip — 第四+五轮整合：离线 + 折叠 + 简洁/详细 + 新行程 ===== */
+/* Malaysia Trip — compact daily handbook */
 (function () {
   'use strict';
-
-  var TAB_KEY = 'mt_tab';
-  var CHECKED_KEY = 'mt_checked';
-  var COLLAPSE_KEY = 'mt_collapsed';
-  var NUMS = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
-
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-    });
+  var BOOKING_KEY = 'mt_booking_status';
+  var DAY_KEY = 'mt_day';
+  var statuses = {'TO BOOK':'待办', 'BOOKED':'已办', 'NOT REQUIRED':'无需办理'};
+  function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function read(key, fallback) { try {return JSON.parse(localStorage.getItem(key)) || fallback;} catch (_) {return fallback;} }
+  var bookingState = read(BOOKING_KEY, {});
+  if (typeof bookingState !== 'object' || Array.isArray(bookingState)) bookingState = {};
+  function navigation(s) {
+    return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(s.navigationName || (s.lat + ',' + s.lng));
   }
-  function mapsPlace(lat, lng) {
-    return 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng;
-  }
-  function mapsDirTo(lat, lng) {
-    return 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
-  }
-  function priorityClass(priority) {
-    return String(priority || 'MUST').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
-  }
-  function priorityBadge(spot) {
-    var value = spot.priority || 'MUST';
-    return '<span class="priority-badge priority-badge--' + priorityClass(value) + '">' + esc(value) + '</span>' + (spot.weatherSensitive ? '<span class="weather-badge">Weather-sensitive</span>' : '');
-  }
-
-  /* ---------- 状态 ---------- */
-  var collapsed = {};
-  try { collapsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '{}') || {}; } catch (e) {}
-  var checkedSet = {};
-  try { (JSON.parse(localStorage.getItem(CHECKED_KEY)) || []).forEach(function (id) { checkedSet[id] = true; }); } catch (e) {}
-
-  function saveChecked() { try { localStorage.setItem(CHECKED_KEY, JSON.stringify(Object.keys(checkedSet))); } catch (e) {} }
-  function saveCollapsed() { try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed)); } catch (e) {} }
-
-  /* ---------- 本地照片；加载失败时收起图片区域 ---------- */
-  function photo(item, className) {
-    if (!item.image) return '';
-    return '<figure class="place-photo ' + className + '"><img src="' + esc(item.image) + '" alt="' + esc(item.imageAlt || item.zh || item.zhName) + '" loading="lazy" decoding="async" width="800" height="450" onerror="this.closest(\'figure\').hidden=true">' +
-      (item.imageSource ? '<figcaption><a href="' + esc(item.imageSource) + '" target="_blank" rel="noopener">' + esc(item.imageCredit || '照片来源') + '</a></figcaption>' : '') + '</figure>';
-  }
-
-  /* ---------- 渲染住宿 ---------- */
+  function copyButton(name) {return '<button class="spot-copy-name" type="button" data-copy="'+esc(name)+'" aria-label="复制 '+esc(name)+'">'+esc(name)+' ⧉</button>';}
+  function disclosure(title, body, cls) {return '<details class="compact-panel '+(cls || '')+'"><summary>'+title+'</summary><div class="panel-body">'+body+'</div></details>';}
   function renderStays() {
-    var html = '<section class="stays-section"><button type="button" class="stays-toggle" aria-expanded="false"><span>🏨 住宿</span><span class="stays-toggle-meta">' + TRIP.stays.length + ' 家 · 点击查看</span><span class="stays-toggle-icon">▸</span></button><div class="stays-body" hidden>';
-    TRIP.stays.forEach(function (s) {
-      var statusBadge = s.status === 'tentative' ? '<span class="stay-status stay-status--tentative">待确认</span>' : '<span class="stay-status stay-status--confirmed">已确认</span>';
-      var candidatesHtml = s.candidates ? '<div class="stay-candidates">候选：' + s.candidates.map(function(c){ return esc(c); }).join(' / ') + '</div>' : '';
-      html +=
-        '<article class="stay-card">' +
-          photo(s, 'stay-img-wrap') +
-          '<div class="stay-body">' +
-            '<div class="stay-head"><h3 class="stay-name">' + esc(s.zhName) + '</h3>' + statusBadge + '</div>' +
-            '<p class="stay-dates">' + s.dates + ' · ' + s.nights + ' 晚</p>' +
-            '<p class="stay-addr">' + esc(s.address) + '</p>' +
-            '<div class="stay-meta"><span>入住 ' + s.checkIn + '</span><span>退房 ' + s.checkOut + '</span></div>' +
-            candidatesHtml +
-            '<div class="stay-btns">' +
-              '<a class="mini-btn" target="_blank" rel="noopener" href="' + s.googleMapsUrl + '">📍 Google Maps</a>' +
-              '<a class="mini-btn" target="_blank" rel="noopener" href="' + mapsDirTo(s.lat, s.lng) + '">🧭 导航</a>' +
-            '</div>' +
-          '</div>' +
-        '</article>';
-    });
-    return html + '</div></section>';
+    return disclosure('🏨 住宿', TRIP.stays.map(function(s) {
+      return '<article class="hotel-compact"><strong>'+esc(s.zhName)+'</strong><p>'+esc(s.dates)+' · '+s.nights+'晚 · 入住'+esc(s.checkIn)+' / 退房'+esc(s.checkOut)+'</p>'+copyButton(s.name)+' <a class="spot-nav-btn" href="'+navigation(s)+'" target="_blank" rel="noopener">导航</a></article>';
+    }).join(''), 'stays-section');
   }
-
-  /* ---------- 渲染地点卡片 ---------- */
-  function renderSpot(day, spot, i, idx) {
-    var next = spot.next || { mode: 'none', text: '' };
-    var hasNext = next.mode && next.mode !== 'none' && i < day.spots.length - 1;
-    var nextHtml = hasNext ? '<div class="spot-next">' + (next.mode === 'grab' ? '🚗 ' : next.mode === 'walk' ? '🚶 ' : '🚉 ') + esc(next.text) + '</div>' : '';
-    var simpleHtml =
-      '<div class="spot-simple">' +
-        '<div class="spot-time-line"><span class="spot-time">' + esc(spot.time || '') + '</span>' + (spot.duration ? '<span class="spot-duration">' + esc(spot.duration) + '</span>' : '') + '</div>' +
-        '<div class="spot-actions">' +
-          (spot.en ? '<button type="button" class="spot-copy-name" data-copy="' + esc(spot.en) + '" title="点击复制英文名">' + esc(spot.en) + '</button>' : '') +
-          '<a class="spot-nav-btn" target="_blank" rel="noopener" href="' + mapsDirTo(spot.lat, spot.lng) + '">🧭 导航</a>' +
-        '</div>' +
-      '</div>';
-
-    return (
-      '<li class="spot-item" id="d' + day.id + '-spot-' + i + '" data-spot="' + idx + '-' + i + '" data-lat="' + spot.lat + '" data-lng="' + spot.lng + '" data-day="' + day.id + '" data-index="' + i + '">' +
-        '<div class="spot-line"><span class="spot-num">' + NUMS[i] + '</span> ' + spot.emoji + ' <b class="spot-name">' + esc(spot.zh) + '</b></div>' +
-        simpleHtml +
-        nextHtml +
-      '</li>'
-    );
+  function renderBookings() {
+    return disclosure('📋 预订 / 准备', '<p class="muted">状态保存在当前浏览器，不跨设备同步。</p>'+TRIP.bookings.map(function(b,i) {
+      var value = statuses[bookingState[b.name]] ? bookingState[b.name] : b.status;
+      return '<div class="booking-item"><label for="booking-'+i+'">'+esc(b.name)+'</label><select id="booking-'+i+'" data-booking="'+i+'" aria-label="'+esc(b.name)+'办理状态">'+Object.keys(statuses).map(function(k){return '<option value="'+k+'"'+(k===value?' selected':'')+'>'+statuses[k]+'</option>';}).join('')+'</select><p>'+esc(b.note)+'</p></div>';
+    }).join('')+'<p id="booking-feedback" role="status" aria-live="polite"></p>', 'booking-center');
   }
-
-  /* ---------- 渲染餐厅 ---------- */
-  function renderRestaurants(day) {
-    if (!day.restaurants || !day.restaurants.length) return '';
-    var html = '<article class="event-card restaurant-card"><h3 class="event-title">🍽️ 当日餐食</h3><div class="restaurant-list">';
-    day.restaurants.forEach(function (r, ri) {
-      var mealEmoji = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍧' }[r.meal] || '🍽️';
-      var tagsHtml = r.tags ? r.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') : '';
-      var simpleR =
-        '<div class="restaurant-simple">' +
-          '<div class="restaurant-head"><span class="restaurant-meal">' + mealEmoji + ' ' + esc(r.meal) + '</span><span class="restaurant-time">' + esc(r.time) + '</span></div>' +
-          '<div class="restaurant-name">' + esc(r.zhName) + '</div>' +
-          '<div class="restaurant-meta">' + esc(r.cuisine) + ' · ' + esc(r.pricePerPerson) + '</div>' +
-          '<div class="restaurant-dishes">推荐：' + r.recommendedDishes.slice(0, 2).map(function(d){ return esc(d); }).join(' · ') + '</div>' +
-          '<div class="restaurant-btns">' +
-            '<a class="mini-btn" target="_blank" rel="noopener" href="' + r.googleMapsUrl + '">🧭 导航</a>' +
-            '<button type="button" class="spot-toggle" data-target="restaurant-detail-' + day.id + '-' + ri + '" aria-expanded="false">详情 ›</button>' +
-          '</div>' +
-        '</div>';
-      var detailR =
-        '<div class="restaurant-detail" id="restaurant-detail-' + day.id + '-' + ri + '" hidden>' +
-          '<div class="restaurant-full">' +
-            '<div>' + esc(r.name) + '</div>' +
-            '<div>🕐 ' + esc(r.openingHours) + '</div>' +
-            '<div>📍 ' + esc(r.distanceFromPrev) + '</div>' +
-            '<div>推荐：' + r.recommendedDishes.map(function(d){ return esc(d); }).join(' · ') + '</div>' +
-            '<div class="restaurant-tags">' + tagsHtml + '</div>' +
-            (r.backup ? '<div class="restaurant-backup">备用：' + esc(r.backup.zhName || r.backup.name) + ' — ' + esc(r.backup.note) + '</div>' : '') +
-            '<div class="restaurant-btns"><a class="mini-btn" target="_blank" rel="noopener" href="' + r.googleMapsUrl + '">📍 Google Maps</a></div>' +
-          '</div>' +
-        '</div>';
-      html += '<div class="restaurant-item">' + simpleR + detailR + '</div>';
-    });
-    return html + '</div></article>';
+  function renderSpot(s, i, day) {
+    var n = s.next || {};
+    var duration = s.duration && s.duration !== '—' ? ' · '+esc(s.duration) : '';
+    return '<li class="spot-item" id="d'+day+'-spot-'+i+'"><div class="spot-line"><span class="spot-num">'+(i+1)+'</span><span>'+esc(s.emoji)+'</span><strong>'+esc(s.zh)+'</strong>'+copyButton(s.en)+'<a class="spot-nav-btn" href="'+navigation(s)+'" target="_blank" rel="noopener" aria-label="导航至'+esc(s.zh)+'">导航</a></div><div class="spot-time-line">'+esc(s.time)+duration+'</div>'+(s.note && s.note.includes('待订票')?'<p class="spot-next">'+esc(s.note)+'</p>':'')+(n.mode && n.mode!=='none' && n.text ? '<p class="spot-next">'+(n.mode==='grab'?'🚗':n.mode==='walk'?'🚶':'🚉')+' '+esc(n.text)+'</p>':'')+'</li>';
   }
-
-  /* ---------- 渲染每天 ---------- */
-  function renderDay(day, idx) {
-    var t = day.transport;
-    var transportHtml =
-      '<article class="transport-card">' +
-        '<div class="transport-head"><span class="transport-mode">' + esc(t.mode) + '</span><span class="transport-tag">' + esc(t.tag) + '</span></div>' +
-        '<div class="transport-route">' +
-          '<div class="route-end"><span class="route-code">' + esc(t.from.code) + '</span><span class="route-sub">' + esc(t.from.sub) + '</span></div>' +
-          '<div class="route-mid"><span class="route-icon">' + t.mid.icon + '</span><span class="route-dur">' + esc(t.mid.dur) + '</span></div>' +
-          '<div class="route-end route-end--right"><span class="route-code">' + esc(t.to.code) + '</span><span class="route-sub">' + esc(t.to.sub) + '</span></div>' +
-        '</div>' +
-        '<div class="transport-note">' + esc(t.note) + '</div>' +
-      '</article>';
-
-    // 时间分段
-    var listHtml = '';
-    var lastSeg = '';
-    day.spots.forEach(function (spot, i) {
-      var seg = 'morning';
-      if (i >= day.spots.length - 2) seg = 'evening';
-      else if (i > 1) seg = 'afternoon';
-      if (seg !== lastSeg) {
-        listHtml += '<li class="time-seg">' + { morning: '🌅 MORNING', afternoon: '☀️ AFTERNOON', evening: '🌙 EVENING' }[seg] + '</li>';
-        lastSeg = seg;
-      }
-      listHtml += renderSpot(day, spot, i, idx);
-    });
-
-    var waypoints = day.spots.filter(TRIP.isMapLocation).map(function (s) { return s.lat + ',' + s.lng; }).join('/');
-    var dayRouteBtn = day.id === 3
-      ? '<div class="day-route-note">D3 公共交通按文字分段执行，不生成整天驾车路线。</div>'
-      : '<a class="mini-btn day-route-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/' + waypoints + '">📍 在 Google Maps 查看今日完整路线</a>';
-
-    var planBHtml = day.planB ? '<aside class="plan-b"><strong>Plan B</strong><span>' + esc(day.planB) + '</span></aside>' : '';
-    var returnPlansHtml = day.returnPlans ? '<aside class="return-plans"><h3>回程方案</h3>' + day.returnPlans.map(function (plan) {
-      return '<div class="return-plan"><strong>' + esc(plan.title) + '</strong><span>' + esc(plan.text) + '</span></div>';
-    }).join('') + '</aside>' : '';
-
-    var isCollapsed = collapsed['day-' + day.id] || false;
-    var collapseIcon = isCollapsed ? '▸' : '▾';
-
-    return (
-      '<section class="day-section" id="d' + day.id + '">' +
-        '<div class="day-header">' +
-          '<div class="day-num">' + day.num + '</div>' +
-          '<div class="day-info">' +
-            '<span class="day-date">' + day.weekday + ' · ' + day.date + '</span>' +
-            '<span class="day-title">｜' + esc(day.title) + '</span>' +
-          '</div>' +
-          '<button class="day-collapse-btn" data-day="' + day.id + '" aria-expanded="' + !isCollapsed + '">' + collapseIcon + '</button>' +
-        '</div>' +
-        '<p class="day-theme">' + esc(day.theme) + '</p>' +
-        '<div class="day-content" id="day-content-' + day.id + '"' + (isCollapsed ? ' hidden' : '') + '>' +
-          planBHtml + returnPlansHtml +
-          '<article class="event-card"><h3 class="event-title">📅 Day ' + day.id + ' 行程</h3><ul class="trip-list">' + listHtml + '</ul></article>' +
-          renderRestaurants(day) +
-        '</div>' +
-      '</section>'
-    );
+  function renderFood(day) {
+    return disclosure('🍽️ 吃什么',day.restaurants.map(function(r){return '<article class="food-compact"><strong>'+esc(r.zhName)+'</strong> <a class="spot-nav-btn" target="_blank" rel="noopener" href="'+esc(r.googleMapsUrl)+'">地图</a><p>'+esc(r.recommendedDishes.slice(0,2).join(' · '))+' · '+esc(r.pricePerPerson)+'</p>'+(r.note?'<p class="muted">'+esc(r.note)+'</p>':'')+'</article>';}).join(''));
   }
-
-  function renderBookingCenter() {
-    if (!TRIP.bookings || !TRIP.bookings.length) return '';
-    var html = '<article class="booking-center event-card"><div class="booking-head"><h2>预订 / 准备</h2><span>出发前集中确认</span></div><div class="booking-grid">';
-    TRIP.bookings.forEach(function (item) {
-      html += '<div class="booking-item"><div class="booking-item-head"><strong>' + esc(item.name) + '</strong><span class="booking-status booking-status--' + priorityClass(item.status) + '">' + esc(item.status) + '</span></div><p>' + esc(item.note) + '</p></div>';
-    });
-    return html + '</div></article>';
+  function renderDay(day) {
+    var main = '', optional = '';
+    day.spots.forEach(function(s,i){ if(s.optional) optional += renderSpot(s,i,day.id); else main += renderSpot(s,i,day.id); });
+    return '<section class="day-section" id="d'+day.id+'" hidden><h2 class="daily-title">D'+day.id+' · 10月'+Number(day.num)+'日 · '+esc(day.title)+'</h2><ol class="trip-list">'+main+'</ol>'+renderFood(day)+(optional?disclosure('有余力再去','<ol class="trip-list">'+optional+'</ol>'):'')+disclosure('补充说明','<p>'+esc(day.planB)+'</p><p class="muted">交通时间为规划估计；票务、营业与路况以当天为准。</p>')+'</section>';
   }
-
-  /* ---------- 渲染页面 ---------- */
-  var itineraryContainer = document.getElementById('tabContentItinerary');
-  itineraryContainer.innerHTML = renderStays() + renderBookingCenter() + TRIP.days.map(renderDay).join('');
-
-  var staysToggle = document.querySelector('.stays-toggle');
-  if (staysToggle) staysToggle.addEventListener('click', function () {
-    var body = document.querySelector('.stays-body');
-    var expanded = staysToggle.getAttribute('aria-expanded') === 'true';
-    staysToggle.setAttribute('aria-expanded', String(!expanded));
-    body.hidden = expanded;
-    staysToggle.querySelector('.stays-toggle-icon').textContent = expanded ? '▸' : '▾';
-  });
-
-  /* ---------- 标签切换 ---------- */
-  var tabItineraryBtn = document.getElementById('tabItinerary');
-  var tabMapBtn = document.getElementById('tabMap');
-  var tabContentItinerary = document.getElementById('tabContentItinerary');
-  var tabContentMap = document.getElementById('tabContentMap');
-  var bottomNav = document.getElementById('bottomNav');
-
-  function setActiveTab(tab) {
-    var isItinerary = tab === 'itinerary';
-    tabItineraryBtn.classList.toggle('tab-btn--active', isItinerary);
-    tabMapBtn.classList.toggle('tab-btn--active', !isItinerary);
-    tabItineraryBtn.setAttribute('aria-selected', String(isItinerary));
-    tabMapBtn.setAttribute('aria-selected', String(!isItinerary));
-    tabContentItinerary.classList.toggle('active', isItinerary);
-    tabContentMap.classList.toggle('active', !isItinerary);
-    bottomNav.style.display = isItinerary ? 'flex' : 'none';
-    if (!isItinerary && typeof window.ensureMap === 'function') window.ensureMap();
-    try { localStorage.setItem(TAB_KEY, tab); } catch (e) {}
+  document.getElementById('tabContentItinerary').innerHTML = renderStays()+renderBookings()+TRIP.days.map(renderDay).join('');
+  var saved = Number(read(DAY_KEY, 1));
+  var activeDay = /^[#]d[1-5]$/.test(location.hash) ? Number(location.hash.slice(2)) : (saved>=1 && saved<=5 ? saved : 1);
+  function selectDay(day, updateURL) {
+    activeDay=Number(day);
+    document.querySelectorAll('.day-section').forEach(function(el){el.hidden=el.id!=='d'+activeDay;});
+    document.querySelectorAll('#bottomNav a').forEach(function(a){var yes=Number(a.dataset.day)===activeDay;a.classList.toggle('active',yes);if(yes)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+    try {localStorage.setItem(DAY_KEY,JSON.stringify(activeDay));} catch (_) {}
+    if(updateURL) history.replaceState(null,'','#d'+activeDay);
+    if(window.selectMapDay) window.selectMapDay(activeDay);
   }
-  tabItineraryBtn.addEventListener('click', function () { setActiveTab('itinerary'); });
-  tabMapBtn.addEventListener('click', function () { setActiveTab('map'); });
-
-  /* ---------- Checkbox 持久化 ---------- */
-  function updateProgress(dayId) {
-    var total = document.querySelectorAll('input[data-persist^="d' + dayId + '-"]').length;
-    var done = document.querySelectorAll('li.done[data-spot^="' + (dayId - 1) + '-"]').length;
-    var el = document.getElementById('progress-d' + dayId);
-    if (el) el.textContent = done + ' / ' + total;
+  window.selectTripDay=function(day){selectDay(day,true);};
+  function setTab(tab) {
+    ['Itinerary','Map'].forEach(function(name){var yes=(name.toLowerCase()===tab);document.getElementById('tab'+name).classList.toggle('tab-btn--active',yes);document.getElementById('tab'+name).setAttribute('aria-selected',String(yes));document.getElementById('tabContent'+name).classList.toggle('active',yes);});
+    if(tab==='map' && window.ensureMap) {window.ensureMap(); window.selectMapDay(activeDay);}
   }
-
-  document.querySelectorAll('input[data-persist]').forEach(function (input) {
-    var id = input.getAttribute('data-persist');
-    var li = input.closest('li');
-    if (checkedSet[id]) { input.checked = true; li.classList.add('done'); }
-    input.addEventListener('change', function () {
-      if (input.checked) { checkedSet[id] = true; li.classList.add('done'); }
-      else { delete checkedSet[id]; li.classList.remove('done'); }
-      saveChecked();
-      var dayNum = id.slice(1, id.indexOf('-', 1));
-      updateProgress(dayNum);
-    });
-  });
-
-  document.querySelectorAll('.reset-day-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var dayId = btn.getAttribute('data-day');
-      if (!window.confirm('确定重置 Day ' + dayId + ' 的全部进度？')) return;
-      document.querySelectorAll('input[data-persist^="d' + dayId + '-"]').forEach(function (input) {
-        input.checked = false; delete checkedSet[input.getAttribute('data-persist')];
-        input.closest('li').classList.remove('done');
-      });
-      saveChecked(); updateProgress(dayId);
-    });
-  });
-
-  TRIP.days.forEach(function (d) { updateProgress(d.id); });
-
-  /* ---------- 折叠系统 ---------- */
-  document.querySelectorAll('.day-collapse-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var dayId = btn.getAttribute('data-day');
-      var content = document.getElementById('day-content-' + dayId);
-      var isHidden = content.hidden;
-      content.hidden = !isHidden;
-      btn.textContent = isHidden ? '▾' : '▸';
-      btn.setAttribute('aria-expanded', String(isHidden));
-      collapsed['day-' + dayId] = !isHidden;
-      saveCollapsed();
-    });
-  });
-
-  document.querySelectorAll('.spot-toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var targetId = btn.getAttribute('data-target');
-      var target = document.getElementById(targetId);
-      if (!target) return;
-      var isHidden = target.hidden;
-      target.hidden = !isHidden;
-      btn.textContent = isHidden ? '收起 ›' : '详情 ›';
-      btn.setAttribute('aria-expanded', String(isHidden));
-    });
-  });
-
-  document.querySelectorAll('.spot-copy-name').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var name = btn.getAttribute('data-copy') || '';
-      var done = function () { var old = btn.textContent; btn.textContent = '已复制'; setTimeout(function () { btn.textContent = old; }, 1200); };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(name).then(done).catch(function () {});
-      else {
-        var input = document.createElement('textarea'); input.value = name; document.body.appendChild(input); input.select();
-        try { document.execCommand('copy'); done(); } catch (e) {} input.remove();
-      }
-    });
-  });
-
-  /* ---------- Timeline → 地图联动 ---------- */
-  document.querySelectorAll('.mini-btn--map').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var dayId = parseInt(btn.getAttribute('data-day'), 10);
-      var spotIdx = parseInt(btn.getAttribute('data-index'), 10);
-      setActiveTab('map');
-      setTimeout(function () {
-        if (typeof window.flyToSpot === 'function') window.flyToSpot(dayId, spotIdx);
-      }, 300);
-    });
-  });
-
-  /* ---------- 滚动观察 ---------- */
-  var sections = Array.prototype.slice.call(document.querySelectorAll('.day-section'));
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.bottom-nav a'));
-  var topbar = document.getElementById('topbar');
-
-  function onScroll() {
-    if (window.scrollY > 40) topbar.classList.add('topbar--scrolled');
-    else topbar.classList.remove('topbar--scrolled');
-    var current = '';
-    sections.forEach(function (section) {
-      if (window.pageYOffset >= (section.offsetTop - 170)) current = section.getAttribute('id');
-    });
-    if (!current) current = 'd1';
-    var currentDay = current.replace('d', '');
-    sections.forEach(function (section) {
-      var header = section.querySelector('.day-header');
-      if (header) header.classList.toggle('in-view', section.getAttribute('id') === current);
-    });
-    navLinks.forEach(function (link) {
-      link.classList.toggle('active', link.getAttribute('data-day') === currentDay);
-    });
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
-
-  /* ---------- 初始化 ---------- */
-  function tripDayForToday() {
-    var start = new Date(2026, 9, 2), end = new Date(2026, 9, 6);
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    if (today < start || today > end) return null;
-    return Math.floor((today - start) / 86400000) + 1;
-  }
-  function init() {
-    var savedTab = null;
-    try { savedTab = localStorage.getItem(TAB_KEY); } catch (e) {}
-    setActiveTab(savedTab === 'map' ? 'map' : 'itinerary');
-    var day = tripDayForToday();
-    if (day && savedTab !== 'map') {
-      var target = document.getElementById('d' + day);
-      if (target) setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-
+  document.getElementById('tabItinerary').addEventListener('click',function(){setTab('itinerary');});
+  document.getElementById('tabMap').addEventListener('click',function(){setTab('map');});
+  document.querySelectorAll('#bottomNav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();selectDay(a.dataset.day,true);window.scrollTo({top:0,behavior:'auto'});});});
+  window.addEventListener('hashchange',function(){if(/^#d[1-5]$/.test(location.hash)) selectDay(Number(location.hash.slice(2)),false);});
+  selectDay(activeDay,false);
+  document.querySelectorAll('[data-copy]').forEach(function(btn){btn.addEventListener('click',async function(){
+    var label=btn.dataset.copy+' ⧉';
+    try {
+      if(navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(btn.dataset.copy);
+      else {var t=document.createElement('textarea');t.value=btn.dataset.copy;document.body.appendChild(t);t.select();var ok=document.execCommand('copy');t.remove();if(!ok)throw new Error('copy');}
+      btn.textContent='已复制';
+    } catch (_) {btn.textContent='复制失败，请重试';}
+    setTimeout(function(){btn.textContent=label;},1400);
+  });});
+  document.querySelectorAll('[data-booking]').forEach(function(select){select.addEventListener('change',function(){
+    var item=TRIP.bookings[Number(select.dataset.booking)];
+    var old=bookingState[item.name] || item.status;
+    var updated=Object.assign({},bookingState);updated[item.name]=select.value;
+    var feedback=document.getElementById('booking-feedback');
+    try {localStorage.setItem(BOOKING_KEY,JSON.stringify(updated));bookingState=updated;feedback.textContent='已保存';}
+    catch (_) {select.value=old;feedback.textContent='无法保存，请允许浏览器本地存储后重试。';}
+  });});
   /* ---------- Service Worker：更新后仅刷新一次，首次安装不刷新 ---------- */
   if ('serviceWorker' in navigator) {
     var hadController = !!navigator.serviceWorker.controller;

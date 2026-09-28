@@ -561,6 +561,15 @@ a { color: inherit; }
 
 /* ===== 预订与 Plan B ===== */
 .booking-center { margin-bottom: 24px; }
+.booking-toggle {
+  display: flex; align-items: center; width: 100%; gap: 10px; padding: 12px 14px;
+  border: 1px solid var(--card-border); border-radius: 12px; background: var(--card);
+  color: var(--primary); font: inherit; font-weight: 800; text-align: left; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+.booking-toggle-meta { margin-left: auto; color: var(--ink-soft); font-size: .78rem; font-weight: 600; }
+.booking-toggle-icon { font-size: 1.1rem; color: var(--accent); }
+.booking-body { margin-top: 10px; padding: 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--card-border); }
 .booking-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
 .booking-head h2 { margin: 0; font-size: 1.08rem; color: var(--primary); }
 .booking-head span { font-size: .72rem; color: var(--ink-soft); }
@@ -573,6 +582,7 @@ a { color: inherit; }
 .booking-status--booked { background: #e5f4ea; color: #237747; }
 .booking-status--to-book { background: #fff0d8; color: #9a661e; }
 .booking-status--not-required { background: #edf0f4; color: #657181; }
+.booking-status-btn { border: 0; cursor: pointer; font-family: inherit; }
 .plan-b { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; margin-bottom: 14px; border-radius: 10px; background: #fffaf0; border: 1px solid #f1dfb5; color: #725628; font-size: .78rem; line-height: 1.5; }
 .plan-b strong { flex: 0 0 auto; color: #9a661e; }
 .return-plans { margin-bottom: 14px; padding: 12px; border-radius: 10px; background: #f4f7f5; border: 1px solid #dce9df; }
@@ -715,3 +725,31 @@ a { color: inherit; }
 .spot-simple { margin-top: 4px; }
 .spot-img-wrap { max-height: 240px; }
 .hero-bg-img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Daily handbook: small header, readable rows, optional content folded away. */
+.hero { height: auto; min-height: 0; margin-top: 0; padding: 20px 20px 8px; background: transparent; color: var(--primary); }
+.hero-content { position: static; padding: 0; text-align: center; }
+.hero-title { font-size: 1.35rem; color: var(--primary); text-shadow: none; margin: 0; }
+.hero-date { font-size: .75rem; color: var(--ink-soft); margin: 0 0 4px; letter-spacing: 1px; }
+.main-content { padding-top: 14px; padding-bottom: 100px; }
+.compact-panel { margin: 0 0 10px; border: 1px solid var(--card-border); border-radius: 12px; background: white; }
+.compact-panel > summary { padding: 13px 15px; cursor: pointer; font-size: .9rem; font-weight: 700; color: var(--primary); }
+.panel-body { padding: 0 15px 14px; font-size: .85rem; line-height: 1.6; }
+.panel-body p { margin: 8px 0; }
+.daily-title { font-size: 1.08rem; margin: 22px 0 14px; color: var(--primary); }
+.day-section { margin-bottom: 0; }
+.trip-list { list-style: none; }
+.trip-list .spot-item { padding: 13px 14px; margin: 0 0 8px; border: 1px solid #ece9e3; background: white; border-radius: 10px; }
+.spot-line { display: flex; flex-wrap: wrap; gap: 5px 8px; align-items: center; font-size: .92rem; }
+.spot-num { min-width: 16px; color: #8c7256; font-weight: 700; }
+.spot-copy-name { font-size: .73rem; color: #64717a; background: #f6f7f8; padding: 7px 8px; border: 0; min-height: 32px; }
+.spot-nav-btn { padding: 7px 10px; min-height: 32px; display: inline-flex; align-items: center; }
+.spot-time-line { margin-top: 7px; font-size: .81rem; color: #86643f; }
+.spot-next { padding: 0; margin: 7px 0 0; font-size: .81rem; color: #5f6870; }
+.hotel-compact + .hotel-compact, .food-compact + .food-compact { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
+.muted { color: #69737b; font-size: .78rem; }
+.booking-item { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 6px; margin: 8px 0; align-items: center; }
+.booking-item p { grid-column: 1 / -1; margin: 0; }
+.booking-item select { min-height: 36px; font: inherit; font-size: .8rem; border: 1px solid #cfd5da; background: white; border-radius: 6px; padding: 4px; }
+#booking-feedback { color: #75551e; }
+button:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible { outline: 2px solid #816346; outline-offset: 3px; }

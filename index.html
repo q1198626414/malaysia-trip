@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="app-version" content="20260921-plan-05">
+  <meta name="app-version" content="20260928-simple-01">
   <meta name="theme-color" content="#fdfaf6">
   <meta name="description" content="马来西亚五天四夜行程手册（2026.10.02 – 10.06）｜吉隆坡 × 马六甲">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
   <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/style.css?v=20260921-plan-05">
+  <link rel="stylesheet" href="css/style.css?v=20260928-simple-01">
 </head>
 <body>
 
@@ -32,14 +32,9 @@
 
   <!-- Hero -->
   <section class="hero" aria-label="行程概览">
-    <div class="hero-bg" aria-hidden="true">
-      <img src="img/petronas-towers.webp" alt="" class="hero-bg-img" onerror="this.src='img/hero.webp';this.onerror=null">
-    </div>
-    <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content">
       <p class="hero-date">2026.10.02 – 2026.10.06</p>
       <h1 class="hero-title">Malaysia Trip</h1>
-      <p class="hero-sub">马来西亚五天四夜 · 吉隆坡 × 马六甲 × 波德申</p>
     </div>
   </section>
 
@@ -56,7 +51,7 @@
       <section class="map-panel">
         <div class="map-header">
           <h2 class="map-title">马来西亚路线</h2>
-          <p class="map-hint">仅显示马来西亚行程。实线为 Grab，虚线为步行；公共交通请查看当天说明。</p>
+          <p class="map-hint">连线仅示意地点顺序，非实际道路；实际出行请用 Google Maps 导航。</p>
         </div>
         <div class="map-filter" id="mapFilter" role="group" aria-label="按日期筛选">
           <button class="filter-btn filter-btn--active" data-day="all">全部</button>
@@ -66,7 +61,7 @@
           <button class="filter-btn" data-day="4">D4</button>
           <button class="filter-btn" data-day="5">D5</button>
         </div>
-        <label class="optional-toggle"><input type="checkbox" id="mapOptionalToggle" checked> <span>显示可选景点</span></label>
+        <label class="optional-toggle"><input type="checkbox" id="mapOptionalToggle"> <span>显示可选景点</span></label>
         <div id="map" class="map"></div>
         <details id="mapFallback" class="map-route-list">
           <summary>查看文字路线（无需地图服务）</summary>
@@ -91,8 +86,8 @@
   </nav>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="js/data.js?v=20260921-plan-05"></script>
-  <script src="js/map.js?v=20260921-plan-05"></script>
-  <script src="js/app.js?v=20260921-plan-05"></script>
+  <script src="js/data.js?v=20260928-simple-01"></script>
+  <script src="js/map.js?v=20260928-simple-01"></script>
+  <script src="js/app.js?v=20260928-simple-01"></script>
 </body>
 </html>

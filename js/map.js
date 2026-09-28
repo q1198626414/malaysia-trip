@@ -35,8 +35,8 @@
   var mapReady = false;
   var dayLayers = {};
   var nodeLayers = {};
-  var currentFilter = 'all';
-  var showOptional = true;
+  var currentFilter = '1';
+  var showOptional = false;
   var markersBySpot = {}; // "dayId-index" -> L.marker
   var currentTileLayer = null;
   var tileFailCount = 0;
@@ -105,9 +105,9 @@
       var visibleNum = 0;
       day.spots.forEach(function (s, i) {
         if (!TRIP.isMapLocation(s) || (!showOptional && s.optional)) return;
-        var num = ++visibleNum;
+        var num = i + 1;
         html += '<li><b>' + num + '.</b> ' + s.zh + ' ' + s.en + '</li>';
-        if (s.next && s.next.mode !== 'none' && i < day.spots.length - 1) {
+        if (s.next && s.next.mode !== 'none') {
           html += '<li class="fallback-arrow">↓ ' + s.next.text + '</li>';
         }
       });
@@ -159,6 +159,7 @@
           // Timeline 联动：滚动到对应行程卡片
           var el = document.getElementById('d' + day.id + '-spot-' + i);
           if (el) {
+            if (window.selectTripDay) window.selectTripDay(day.id);
             setActiveTab('itinerary');
             setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
           }
@@ -191,11 +192,12 @@
       }).addTo(nodeLayers[n.day]).bindPopup('<div class="map-popup"><b>' + n.name + '</b><div class="map-popup-meta">交通节点 · 长途巴士</div></div>');
     });
 
-    applyFilter('all');
+    applyFilter(currentFilter);
   }
 
   function applyFilter(f) {
     currentFilter = f;
+    if (!map) { renderFallbackRoutes(); return; }
     Object.keys(dayLayers).forEach(function (id) {
       var show = f === 'all' || String(f) === String(id);
       if (show) { if (!map.hasLayer(dayLayers[id])) dayLayers[id].addTo(map); }
@@ -261,6 +263,10 @@
   }
 
   // 暴露给 app.js：点击 Timeline 地点时飞至地图 Marker
+  window.selectMapDay = function (day) {
+    applyFilter(String(day));
+    document.querySelectorAll('#mapFilter .filter-btn').forEach(function(btn) { btn.classList.toggle('filter-btn--active', btn.getAttribute('data-day') === String(day)); });
+  };
   window.flyToSpot = function (dayId, spotIndex) {
     if (!map) return;
     applyFilter(String(dayId));
