@@ -103,6 +103,45 @@
       feedback.textContent='已保存';
     } catch (_) {feedback.textContent='无法保存，请允许浏览器本地存储后重试。';}
   });});
+
+  /* Confirm every essential resource is stored before promising offline access. */
+  var offlineBox = document.createElement('div');
+  offlineBox.setAttribute('role', 'status');
+  offlineBox.style.cssText = 'padding:10px 16px;font-size:13px;background:#fdfaf6;color:#555;text-align:center;';
+  offlineBox.textContent = '正在检查离线行程…';
+  document.querySelector('.topbar').insertAdjacentElement('afterend', offlineBox);
+  var essential = ['./index.html','./css/style.css?v=20260928-booking-03',
+    './js/data.js?v=20260928-booking-03','./js/map.js?v=20260928-booking-03',
+    './js/app.js?v=20260928-booking-03','./vendor/leaflet/leaflet.js',
+    './vendor/leaflet/leaflet.css'];
+  async function checkOfflineReady() {
+    try {
+      if (!('serviceWorker' in navigator) || !('caches' in window)) throw new Error('unsupported');
+      var names = await caches.keys();
+      var name = names.find(function(n) { return n === 'malaysia-trip-20260928-booking-03'; });
+      if (!name) throw new Error('pending');
+      var cache = await caches.open(name);
+      var results = await Promise.all(essential.map(function(p) { return cache.match(new URL(p, location.href).href); }));
+      if (!results.every(Boolean)) throw new Error('pending');
+      offlineBox.textContent = navigator.onLine
+        ? '✓ 行程已保存，可离线使用 · 地图导航需联网'
+        : '✓ 当前离线 · 行程、住宿、餐厅和文字路线可用';
+    } catch (_) {
+      offlineBox.textContent = navigator.onLine
+        ? '离线保存尚未完成，请保持联网并稍后刷新'
+        : '离线缓存不完整，请连接 Wi-Fi 后重新打开';
+    }
+  }
+  window.addEventListener('online', checkOfflineReady);
+  window.addEventListener('offline', checkOfflineReady);
+  window.addEventListener('pageshow', checkOfflineReady);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', checkOfflineReady);
+    navigator.serviceWorker.ready.then(checkOfflineReady);
+  }
+  checkOfflineReady();
+  setTimeout(checkOfflineReady, 5000);
+
   /* ---------- Service Worker：更新后仅刷新一次，首次安装不刷新 ---------- */
   if ('serviceWorker' in navigator) {
     var hadController = !!navigator.serviceWorker.controller;
